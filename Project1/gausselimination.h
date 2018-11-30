@@ -25,8 +25,8 @@ public:
 
 private:
     char elimainate(double **eqsCoeff, double * eqForcingCoeff, int size, int *row_index, double *array_of_row_biggest);
-    void pivot(double **eqsCoeff, double * eqForcingCoeff, int size, int currentIndex, double *array_of_row_biggest, int *rows_ptr_arr);
-    void substituteBack(double **upperTriMatrix, double * eqForcingCoeff, int size, double * roots);
+    void pivot(double **eqsCoeff, int size, int currentIndex, double *array_of_row_biggest, int *rows_ptr_arr);
+    void substituteBack(double **upperTriMatrix, double * eqForcingCoeff, int size, double * roots, int *rows_index_arr);
 
 
 };

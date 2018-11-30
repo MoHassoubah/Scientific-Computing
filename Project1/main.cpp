@@ -8,19 +8,21 @@ int main(int argc, char *argv[])
 
    /* gauss elimination testing */
     GaussElimination test_obj;
-    double equroots[2];
+    int size = 3;
+    double equ1[3]= {70,1,0};
+    double equ2[3]= {60,-1,1};
+    double equ3[3]= {40,0,-1};
+    double forcingF[3] = {636,518,307};
+    double equroots[3];
 
-    double equ1[2]= {1,2};
-    double equ2[2]= {1.1,2};
-    double forcingF[2] = {10,10.4};
-    double **equations = new double *[2];
-
+    double **equations = new double *[size];
     equations[0] = equ1;
     equations[1] = equ2;
+    equations[2] = equ3;
 
-    test_obj.SolveEQs(equations,forcingF,2,equroots);
+    test_obj.SolveEQs(equations,forcingF,size,equroots);
+    /* gauss elimination testing end */
 
 
-
-    return 0;//a.exec();
+    return a.exec();
 }
