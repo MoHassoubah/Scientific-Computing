@@ -2,8 +2,9 @@
 #define GAUSSELIMINATION_H
 #include "iostream"
 #include <cmath>
+#include "ieqssolver.h"
 
-class GaussElimination
+class GaussElimination : IEQsSolver
 {
 public:
     GaussElimination();
@@ -22,7 +23,7 @@ public:
      *  o/p: eqsRoot        -> pointer of array of output roots of system of equations
      *                          ex. [x1, x2]
      * */
-    char SolveEQs(double **eqsCoeff, double * eqsForcingCoeff, int size, double * eqsRoot);
+    virtual char SolveEQs(double **eqsCoeff, double * eqsForcingCoeff, int size, double * eqsRoot);
 
     void SetTolValue(double tol){m_tol = tol;}
 private:
