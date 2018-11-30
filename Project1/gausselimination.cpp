@@ -8,8 +8,8 @@ GaussElimination::GaussElimination()
 char GaussElimination::SolveEQs(double **eqsCoeff, double * eqsForcingCoeff, int size, double * eqsRoot)
 {
     char error = 0;
-    int row_index_arr[size];
-    double array_of_row_biggest[size];
+    int *row_index_arr = new int [size];
+    double *array_of_row_biggest = new double [size];
 
     /* generate row index arr*/
     for (int i =0; i<size; i++)
@@ -23,7 +23,7 @@ char GaussElimination::SolveEQs(double **eqsCoeff, double * eqsForcingCoeff, int
         for (int col_i=1; col_i<size; col_i++)
         {
             if (array_of_row_biggest[row_i]<eqsCoeff[row_i][col_i])
-                array_of_row_biggest[row_i] = fabs(eqsCoeff[row_i][col_i])       ;
+                array_of_row_biggest[row_i] = fabs(eqsCoeff[row_i][col_i]);
         }
     }
 
@@ -49,7 +49,11 @@ char GaussElimination::elimainate(double **eqsCoeff, double * eqForcingCoeff, in
         for (int rows_i= pivot_row_i+1; rows_i<size; rows_i++)
         {
             double factor = eqsCoeff[rows_index_arr[rows_i]][rows_index_arr[pivot_row_i]]/eqsCoeff[rows_index_arr[pivot_row_i]][rows_index_arr[pivot_row_i]];
-
+            for (int col_i=pivot_row_i+1; col_i<size; col_i++)
+            {
+                eqsCoeff[rows_index_arr[rows_i]][rows_index_arr[col_i]] = eqsCoeff[rows_index_arr[rows_i]][rows_index_arr[col_i]] - factor* eqsCoeff[rows_index_arr[pivot_row_i]][rows_index_arr[col_i]];
+            }
+            eqForcingCoeff[rows_index_arr[rows_i]] = eqForcingCoeff[rows_index_arr[rows_i]] - factor*eqForcingCoeff[rows_index_arr[pivot_row_i]];
         }
     }
     /* end of elimination for loop */
@@ -64,6 +68,22 @@ void GaussElimination::pivot(double **eqsCoeff, double * eqForcingCoeff, int siz
 
 void GaussElimination::substituteBack(double **upperTriMatrix, double * eqForcingCoeff, int size, double * roots)
 {
+    /* solution of the last element X[n][n] = b[n]/a[n][n] */
+    roots[size-1] = eqForcingCoeff[size-1]/upperTriMatrix[size-1][size-1];
+
+    /* equation for row n-1 -> a[n-1][n-1]*x[n-1]+a[n-1][n]*x[n] = b[n-1]
+     * we know x[n] and w need to get x[n-1]
+     * x[n-1]= (b[n-1] - a[n-1][n]*x[n])/a[n-1][n-1]
+     * */
+    for(int row_i=size-2; row_i>=0; row_i--)
+    {
+        double sum =0;
+        for (int col_i=row_i+1; col_i<size; col_i++)
+        {
+            sum = sum + upperTriMatrix[row_i][col_i] * roots[col_i];
+        }
+        roots[row_i] = (eqForcingCoeff[row_i] - sum)/upperTriMatrix[row_i][row_i];
+    }
 
 }
 
