@@ -1,0 +1,6 @@
+*.pro.user
+.qmake.stash
+Makefile*
+/debug
+/release
+/build-project1-Desktop_*
