@@ -45,6 +45,14 @@ char GaussElimination::elimainate(double **eqsCoeff, double * eqForcingCoeff, in
     {
         /* get pivot element and pivot equation and rearrange the array of elements */
         pivot(eqsCoeff, size, pivot_row_i, array_of_row_biggest, rows_index_arr);
+        /* error handling */
+        if (fabs(eqsCoeff[rows_index_arr[pivot_row_i]][pivot_row_i]/array_of_row_biggest[rows_index_arr[pivot_row_i]]) < m_tol)
+        {
+            error = -1;
+            std::cout<<"Error!: Gauss elimination: pivot is below tolerance\n";
+            break;
+        }
+
         /* elimination step from the rest of the equations */
         for (int rows_i= pivot_row_i+1; rows_i<size; rows_i++)
         {
@@ -55,6 +63,11 @@ char GaussElimination::elimainate(double **eqsCoeff, double * eqForcingCoeff, in
             }
             eqForcingCoeff[rows_index_arr[rows_i]] = eqForcingCoeff[rows_index_arr[rows_i]] - factor*eqForcingCoeff[rows_index_arr[pivot_row_i]];
         }
+    }
+    if (fabs(eqsCoeff[rows_index_arr[size-1]][size-1]/array_of_row_biggest[rows_index_arr[size-1]]) < m_tol)
+    {
+        error = -1;
+        std::cout<<"Error!: Gauss elimination: pivot is below tolerance\n";
     }
     /* end of elimination for loop */
 

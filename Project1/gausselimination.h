@@ -1,5 +1,6 @@
 #ifndef GAUSSELIMINATION_H
 #define GAUSSELIMINATION_H
+#include "iostream"
 #include <cmath>
 
 class GaussElimination
@@ -23,7 +24,9 @@ public:
      * */
     char SolveEQs(double **eqsCoeff, double * eqsForcingCoeff, int size, double * eqsRoot);
 
+    void SetTolValue(double tol){m_tol = tol;}
 private:
+    double m_tol = 1e-15;   /* default tolerance value */
     char elimainate(double **eqsCoeff, double * eqForcingCoeff, int size, int *row_index, double *array_of_row_biggest);
     void pivot(double **eqsCoeff, int size, int currentIndex, double *array_of_row_biggest, int *rows_ptr_arr);
     void substituteBack(double **upperTriMatrix, double * eqForcingCoeff, int size, double * roots, int *rows_index_arr);
