@@ -2,9 +2,9 @@
 #define GAUSSELIMINATION_H
 #include "iostream"
 #include <cmath>
-#include "ieqssolver.h"
+#include "iequationssolver.h"
 
-class GaussElimination : IEquationSolver
+class GaussElimination : public IEquationSolver
 {
 public:
     GaussElimination();
