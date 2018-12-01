@@ -4,7 +4,7 @@
 #include <cmath>
 #include "ieqssolver.h"
 
-class GaussElimination : IEQsSolver
+class GaussElimination : public IEQsSolver
 {
 public:
     GaussElimination();
