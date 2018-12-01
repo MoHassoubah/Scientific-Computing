@@ -14,7 +14,7 @@ char LinearRegression::calculateCoeffs(double **x, double *y, int order, double 
 
 
     /*solve the system of linear equations */
-    m_eqsSolver->SolveEQs(equations_coeffs, equations_Forcing_coeff, size, coeffs);
+    m_eqsSolver->solveEquations(equations_coeffs, equations_Forcing_coeff, size, coeffs);
 
 
     return error;

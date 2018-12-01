@@ -21,7 +21,7 @@ int main(int argc, char *argv[])
     equations[1] = equ2;
     equations[2] = equ3;
 
-    test_obj.SolveEQs(equations,forcingF,size,equroots);
+    test_obj.solveEquations(equations,forcingF,size,equroots);
     std::cout<<"x0="<<equroots[0]<<", x1="<<equroots[1]<<", x2="<<equroots[2]<<"\n";
     /* expected output values x0=8.59412, x1=34.4118, x2=36.7647 */
     delete [] equations;

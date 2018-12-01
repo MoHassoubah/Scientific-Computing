@@ -1,6 +1,6 @@
 #ifndef LINEARREGRESSION_H
 #define LINEARREGRESSION_H
-#include "ieqssolver.h"
+#include "iequationssolver.h"
 
 class LinearRegression
 {
@@ -15,11 +15,11 @@ public:
     /* must be called before calling calculateCoeffs in order to
      * define the strategy to solve system the system of linear equations
      *   */
-    void setEqSolverStrategy (IEQsSolver * s){m_eqsSolver = s;}
+    void setEqSolverStrategy (IEquationSolver * s){m_eqsSolver = s;}
 
 private:
 
-    IEQsSolver * m_eqsSolver;
+    IEquationSolver * m_eqsSolver;
 };
 
 #endif // LINEARREGRESSION_H
