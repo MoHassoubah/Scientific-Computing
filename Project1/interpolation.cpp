@@ -1,4 +1,5 @@
 #include <string.h>
+#include <limits>
 #include "interpolation.h"
 
 Interpolation::Interpolation()
@@ -92,3 +93,55 @@ char Interpolation::CSplineCalculateCoeffs(double *x, double *y, int num_points,
 
     return error;
 }
+
+char Interpolation::NewtonsCalcInterpolatingPoly(double *x,
+                                                  double *y,
+                                                  int num_points,
+                                                  int order, double xi, double *yint, double *e)
+{
+    double **finite_diffs = new double *[order];
+
+    /* set to invalid values */
+    *yint = std::numeric_limits<double>::max();
+    *e = std::numeric_limits<double>::max();
+
+    for (int i =0; i<order; i++)
+    {
+        double *eq = new double [order];
+        (void)memset(eq, 0, sizeof(double)*order);
+        finite_diffs[i] = eq;
+    }
+
+    if(order < num_points)
+    {
+        for(int i = 0; i < order; i++)
+        {
+            finite_diffs[i][0] = y[i];
+        }
+
+        for(int j = 1; j < order; j++)
+        {
+            for(int i = 0; i < (order - j); i++)
+            {
+                finite_diffs[i][j] = (finite_diffs[i+1][j-1] - finite_diffs[i][j-1]) /
+                        (x[i+j] -x[i]);
+            }
+        }
+
+        int xterm = 1;
+        double yint_loc[order], ea_loc[order];
+
+        yint_loc[0] = finite_diffs[0][0];
+
+        for(int i = 1; i < order; i++)
+        {
+            xterm = xterm * (xi - x[i-1]);
+            yint_loc[i] = yint_loc[i-1] + (finite_diffs[0][i] * xterm);
+            ea_loc[i-1] = yint_loc[i] - yint_loc[i-1];
+        }
+
+        *yint = yint_loc[order -1];
+        *e = ea_loc[order -1];
+    }
+}
+
