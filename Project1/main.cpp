@@ -89,5 +89,28 @@ int main(int argc, char *argv[])
         std::cout<<"f"<<order<<"(2)="<<y_of_x<<", R"<<order-1<<"="<<error<<"\n";
     }
 
+    {
+        /* test cubic spline */
+        double x[4];
+        x[0] = 1;
+        x[1] = 3;
+        x[2] = 4;
+        x[3] = 7;
+
+        double y[4],coeffs[12];
+        y[0] = 2;
+        y[1] = 1;
+        y[2] = 0;
+        y[3] = 3;
+
+        Interpolation test_obj_1;
+        test_obj_1.setEqSolverStrategy(&GaussElimination_test_obj);
+        test_obj_1.CSplineCalculateCoeffs(x, y, 4, coeffs);
+        for(int i =0; i < 12; i+=4)
+        {
+            std::cout<<"coeffs->>"<<i/4<< "  "<<"a = "<<coeffs[i]<< "  "<<"b="<<coeffs[i+1]<< "  "<<"c="<<coeffs[i+2]<< "  "<<"d="<<coeffs[i+3]<<"\n";
+        }
+    }
+
     return a.exec();
 }

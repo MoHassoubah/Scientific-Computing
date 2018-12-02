@@ -1,6 +1,7 @@
 #include <string.h>
 #include <limits>
 #include "interpolation.h"
+#include "iostream"
 
 Interpolation::Interpolation()
 {
@@ -87,8 +88,19 @@ char Interpolation::CSplineCalculateCoeffs(double *x, double *y, int num_points,
         row_cnt++;
     }
 
+    for(int j = 0; j < 4*size; j++)
+    {
+        for(int i = 0; i < 4*size; i++)
+        {
+            std::cout<<equations_coeffs[j][i]<<" ";
+        }
+        std::cout<<"-->"<<equations_Forcing_coeff[j];
+        std::cout<<"\n";
+    }
+    std::cout<<"\n";
+
     /*solve the system of linear equations */
-    m_eqsSolver->solveEquations(equations_coeffs, equations_Forcing_coeff, size, coeffs);
+    m_eqsSolver->solveEquations(equations_coeffs, equations_Forcing_coeff, 4*size, coeffs);
 
 
     return error;
