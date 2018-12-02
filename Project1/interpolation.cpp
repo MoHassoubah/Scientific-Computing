@@ -9,10 +9,16 @@ Interpolation::Interpolation()
 char Interpolation::CSplineCalculateCoeffs(double *x, double *y, int num_points, double *coeffs){
     char error = 0;
     const int size = num_points - 1;
-    double equations_coeffs [4*size][4*size];
+    double **equations_coeffs = new double *[4*size];
     double equations_Forcing_coeff[4*size];
 
-    (void)memset(equations_coeffs, 0, sizeof(double)*16*size*size);
+    for (int i =0; i<4*size; i++)
+    {
+        double *eq = new double [4*size];
+        (void)memset(eq, 0, sizeof(double)*4*size);
+        equations_coeffs[i] = eq;
+    }
+
     (void)memset(equations_Forcing_coeff, 0, sizeof(double)*4*size);
 
     /* calculate the equations coeffeicents for system of linear equations */
@@ -81,7 +87,7 @@ char Interpolation::CSplineCalculateCoeffs(double *x, double *y, int num_points,
     }
 
     /*solve the system of linear equations */
-    //m_eqsSolver->solveEquations(equations_coeffs, equations_Forcing_coeff, size, coeffs);
+    m_eqsSolver->solveEquations(equations_coeffs, equations_Forcing_coeff, size, coeffs);
 
 
     return error;
