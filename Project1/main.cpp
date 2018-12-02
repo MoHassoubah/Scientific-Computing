@@ -2,6 +2,7 @@
 #include "iostream"
 #include "gausselimination.h"
 #include "linearregression.h"
+#include "interpolation.h"
 
 
 int main(int argc, char *argv[])
@@ -61,6 +62,32 @@ int main(int argc, char *argv[])
     std::cout<<"a0="<<output_coeffs[0]<<", a1="<<output_coeffs[1]<<", a2="<<output_coeffs[2]<<"\n";
     /* expected output values a0=5, a1=4, a2=-3 */
     /* linear regression testing End */
+
+    {
+    /* Test the newton interpolation */
+        double x[4];
+        x[0] = 1;
+        x[1] = 4;
+        x[2] = 6;
+        x[3] = 5;
+
+        double y[4];
+        y[0] = 0;
+        y[1] = 1.386294;
+        y[2] = 1.791759;
+        y[3] = 1.609438;
+
+        double y_of_x, error ;
+
+        int order = 3;
+        Interpolation test_obj_1;
+        test_obj_1.setEqSolverStrategy(&GaussElimination_test_obj);
+        test_obj_1.NewtonsCalcInterpolatingPoly(x,
+                                                y,
+                                                4,
+                                                order, 2, &y_of_x, &error);
+        std::cout<<"f"<<order<<"(2)="<<y_of_x<<", R"<<order-1<<"="<<error<<"\n";
+    }
 
     return a.exec();
 }

@@ -99,49 +99,57 @@ char Interpolation::NewtonsCalcInterpolatingPoly(double *x,
                                                   int num_points,
                                                   int order, double xi, double *yint, double *e)
 {
-    double **finite_diffs = new double *[order];
+    char error = 0;
+    int order_plus_1 = order + 1;
+    double **finite_diffs = new double *[order_plus_1];
 
     /* set to invalid values */
     *yint = std::numeric_limits<double>::max();
     *e = std::numeric_limits<double>::max();
 
-    for (int i =0; i<order; i++)
+    for (int i =0; i<order_plus_1; i++)
     {
-        double *eq = new double [order];
-        (void)memset(eq, 0, sizeof(double)*order);
+        double *eq = new double [order_plus_1];
+        (void)memset(eq, 0, sizeof(double)*order_plus_1);
         finite_diffs[i] = eq;
     }
 
     if(order < num_points)
     {
-        for(int i = 0; i < order; i++)
+        for(int i = 0; i < order_plus_1; i++)
         {
             finite_diffs[i][0] = y[i];
         }
 
-        for(int j = 1; j < order; j++)
+        for(int j = 1; j < order_plus_1; j++)
         {
-            for(int i = 0; i < (order - j); i++)
+            for(int i = 0; i < (order_plus_1 - j); i++)
             {
                 finite_diffs[i][j] = (finite_diffs[i+1][j-1] - finite_diffs[i][j-1]) /
                         (x[i+j] -x[i]);
             }
         }
 
-        int xterm = 1;
-        double yint_loc[order], ea_loc[order];
+        double xterm = 1;
+        double yint_loc[order_plus_1], ea_loc[order];
 
         yint_loc[0] = finite_diffs[0][0];
 
-        for(int i = 1; i < order; i++)
+        for(int i = 1; i < order_plus_1; i++)
         {
             xterm = xterm * (xi - x[i-1]);
             yint_loc[i] = yint_loc[i-1] + (finite_diffs[0][i] * xterm);
             ea_loc[i-1] = yint_loc[i] - yint_loc[i-1];
         }
 
-        *yint = yint_loc[order -1];
+        *yint = yint_loc[order_plus_1 -1];
         *e = ea_loc[order -1];
     }
+    else
+    {
+        error = 1;
+    }
+
+    return error;
 }
 
