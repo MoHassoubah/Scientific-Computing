@@ -92,16 +92,16 @@ int main(int argc, char *argv[])
     {
         /* test cubic spline */
         double x[4];
-        x[0] = 1;
-        x[1] = 3;
-        x[2] = 4;
-        x[3] = 7;
+        x[0] = 3;
+        x[1] = 4.5;
+        x[2] = 7;
+        x[3] = 9;
 
         double y[4],coeffs[12];
-        y[0] = 2;
+        y[0] = 2.5;
         y[1] = 1;
-        y[2] = 0;
-        y[3] = 3;
+        y[2] = 2.5;
+        y[3] = 0.5;
 
         Interpolation test_obj_1;
         test_obj_1.setEqSolverStrategy(&GaussElimination_test_obj);
