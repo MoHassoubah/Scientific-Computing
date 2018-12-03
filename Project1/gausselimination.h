@@ -2,7 +2,7 @@
 #define GAUSSELIMINATION_H
 #include "iostream"
 #include <cmath>
-#include "ieqssolver.h"
+#include "iequationssolver.h"
 
 class GaussElimination : IEquationSolver
 {
@@ -23,7 +23,7 @@ public:
      *  o/p: roots        -> pointer of array of output roots of system of equations
      *                          ex. [x1, x2]
      * */
-    virtual char solveEquations(double **coefficients, double * forcingFunctions, int size, double * roots);
+    char solveEquations(double **coefficients, double * forcingFunctions, int size, double * roots);
 
     void setToleranceValue(double tolerance){m_tolerance = tolerance;}
 private:

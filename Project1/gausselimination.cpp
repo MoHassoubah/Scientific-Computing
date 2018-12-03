@@ -8,13 +8,13 @@ GaussElimination::GaussElimination()
 char GaussElimination::solveEquations(double **coefficients, double * forcingFunctions, int size, double * roots)
 {
     char error = 0;
-    int *rowIndex_arr = new int [size];
+    int *rowIndexArr = new int [size];
     double *arrayOfRowBiggest = new double [size];
 
     /* generate row index arr*/
     for (int i =0; i<size; i++)
     {
-        rowIndex_arr[i] = i; /* will be used in ordering the rows if there is a change */
+        rowIndexArr[i] = i; /* will be used in ordering the rows if there is a change */
     }
     /* get the max element in each row in an array of biggest element in a row */
     for (int row_i =0; row_i<size; row_i++)
@@ -28,11 +28,11 @@ char GaussElimination::solveEquations(double **coefficients, double * forcingFun
     }
 
     /* elimination step */
-    error = elimainate(coefficients, forcingFunctions, size, rowIndex_arr, arrayOfRowBiggest);
+    error = elimainate(coefficients, forcingFunctions, size, rowIndexArr, arrayOfRowBiggest);
 
     /* subistitute back only if no errors in the eliminate step */
     if (error == 0)
-        substituteBack(coefficients, forcingFunctions, size, roots, rowIndex_arr);
+        substituteBack(coefficients, forcingFunctions, size, roots, rowIndexArr);
 
     return  error;
 }
@@ -41,12 +41,12 @@ char GaussElimination::elimainate(double **coefficients, double * forcingFunctio
     char error =0;
 
     /* elimination for loop*/
-    for (int pivot_row_i =0; pivot_row_i < size-1; pivot_row_i++)
+    for (int pivotRow_i =0; pivotRow_i < size-1; pivotRow_i++)
     {
         /* get pivot element and pivot equation and rearrange the array of elements */
-        pivot(coefficients, size, pivot_row_i, arrayOfRowBiggest, rowsIndexArr);
+        pivot(coefficients, size, pivotRow_i, arrayOfRowBiggest, rowsIndexArr);
         /* error handling */
-        if (fabs(coefficients[rowsIndexArr[pivot_row_i]][pivot_row_i]/arrayOfRowBiggest[rowsIndexArr[pivot_row_i]]) < m_tolerance)
+        if (fabs(coefficients[rowsIndexArr[pivotRow_i]][pivotRow_i]/arrayOfRowBiggest[rowsIndexArr[pivotRow_i]]) < m_tolerance)
         {
             error = -1;
             std::cout<<"Error!: Gauss elimination: pivot is below tolerance\n";
@@ -54,14 +54,14 @@ char GaussElimination::elimainate(double **coefficients, double * forcingFunctio
         }
 
         /* elimination step from the rest of the equations */
-        for (int rows_i= pivot_row_i+1; rows_i<size; rows_i++)
+        for (int rows_i= pivotRow_i+1; rows_i<size; rows_i++)
         {
-            double factor = coefficients[rowsIndexArr[rows_i]][pivot_row_i]/coefficients[rowsIndexArr[pivot_row_i]][pivot_row_i];
-            for (int col_i=pivot_row_i+1; col_i<size; col_i++)
+            double factor = coefficients[rowsIndexArr[rows_i]][pivotRow_i]/coefficients[rowsIndexArr[pivotRow_i]][pivotRow_i];
+            for (int col_i=pivotRow_i+1; col_i<size; col_i++)
             {
-                coefficients[rowsIndexArr[rows_i]][col_i] = coefficients[rowsIndexArr[rows_i]][col_i] - factor* coefficients[rowsIndexArr[pivot_row_i]][col_i];
+                coefficients[rowsIndexArr[rows_i]][col_i] = coefficients[rowsIndexArr[rows_i]][col_i] - factor* coefficients[rowsIndexArr[pivotRow_i]][col_i];
             }
-            forcingFunctions[rowsIndexArr[rows_i]] = forcingFunctions[rowsIndexArr[rows_i]] - factor*forcingFunctions[rowsIndexArr[pivot_row_i]];
+            forcingFunctions[rowsIndexArr[rows_i]] = forcingFunctions[rowsIndexArr[rows_i]] - factor*forcingFunctions[rowsIndexArr[pivotRow_i]];
         }
     }
     if (fabs(coefficients[rowsIndexArr[size-1]][size-1]/arrayOfRowBiggest[rowsIndexArr[size-1]]) < m_tolerance)
@@ -76,7 +76,7 @@ char GaussElimination::elimainate(double **coefficients, double * forcingFunctio
 
 void GaussElimination::pivot(double **coefficients, int size, int currentIndex, double *arrayOfRowBiggest, int *rowsPtrArr)
 {
-    int biggest_element_idx = currentIndex;
+    int biggestElementIdx = currentIndex;
     double biggest_element = fabs(coefficients[rowsPtrArr[currentIndex]][currentIndex]/arrayOfRowBiggest[rowsPtrArr[currentIndex]]);
     /* find the biggest pivot element */
     for (int row_i = currentIndex+1; row_i<size; row_i++)
@@ -85,13 +85,13 @@ void GaussElimination::pivot(double **coefficients, int size, int currentIndex, 
         if (tmp > biggest_element)
         {
             biggest_element = tmp;
-            biggest_element_idx = rowsPtrArr[row_i];
+            biggestElementIdx = rowsPtrArr[row_i];
         }
     }
     /* replace the current row index with the row index that contain the biggest pivot element */
     int tmp = rowsPtrArr[currentIndex];
-    rowsPtrArr[currentIndex] = rowsPtrArr[biggest_element_idx];
-    rowsPtrArr[biggest_element_idx] = tmp;
+    rowsPtrArr[currentIndex] = rowsPtrArr[biggestElementIdx];
+    rowsPtrArr[biggestElementIdx] = tmp;
 }
 
 void GaussElimination::substituteBack(double **upperTriMatrix, double * forcingFunctions, int size, double * roots, int *rowsIndexArr)
