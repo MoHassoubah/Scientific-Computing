@@ -18,7 +18,8 @@ SOURCES += \
         main.cpp \
     gausselimination.cpp \
     interpolation.cpp \
-    linearregression.cpp
+    linearregression.cpp \
+    gaussseidel.cpp
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
@@ -29,4 +30,5 @@ HEADERS += \
     gausselimination.h \
     linearregression.h \
     interpolation.h \
-    iequationssolver.h
+    iequationssolver.h \
+    gaussseidel.h

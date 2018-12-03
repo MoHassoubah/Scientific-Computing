@@ -21,6 +21,7 @@ public:
      *                          ex. [x1, x2]
      * */
     virtual char solveEquations(double **coefficients, double * forcingFunctions, int size, double * roots) = 0;
+    virtual void setToleranceValue(double tolerance) = 0;
 };
 
 

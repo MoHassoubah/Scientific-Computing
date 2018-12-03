@@ -1,16 +1,14 @@
-#include <QCoreApplication>
 #include "iostream"
 #include "gausselimination.h"
+#include "gaussseidel.h"
 #include "linearregression.h"
 #include "interpolation.h"
 
 
 int main(int argc, char *argv[])
 {
-    QCoreApplication a(argc, argv);
-
-   /* gauss elimination testing */
-    GaussElimination GaussElimination_test_obj;
+    /* gauss elimination testing */
+    IEquationSolver *Gauss_test_obj = new GaussElimination();
     int size = 4;
     double equ1[4]= {1,-1,2,1};
     double equ2[4]= {3,2,1,4};
@@ -25,7 +23,7 @@ int main(int argc, char *argv[])
     equations[2] = equ3;
     equations[3] = equ4;
 
-    GaussElimination_test_obj.solveEquations(equations,forcingF,size,equroots);
+    Gauss_test_obj->solveEquations(equations,forcingF,size,equroots);
     std::cout<<"x0="<<equroots[0]<<", x1="<<equroots[1]<<", x2="<<equroots[2]<<", x3="<<equroots[3]<<"\n";
     /* expected output values x0=8.59412, x1=34.4118, x2=36.7647 */
     delete [] equations;
@@ -59,7 +57,7 @@ int main(int argc, char *argv[])
     double output_coeffs[3];
 
     LinearRegression test_obj_1;
-    test_obj_1.setEqSolverStrategy(&GaussElimination_test_obj);
+    test_obj_1.setEqSolverStrategy(Gauss_test_obj);
     test_obj_1.calculateCoeffs(x,y,no_of_points,order,output_coeffs);
     std::cout<<"a0="<<output_coeffs[0]<<", a1="<<output_coeffs[1]<<", a2="<<output_coeffs[2]<<"\n";
     /* expected output values a0=5, a1=4, a2=-3 */
@@ -83,7 +81,7 @@ int main(int argc, char *argv[])
 
         int order = 3;
         Interpolation test_obj_1;
-        test_obj_1.setEqSolverStrategy(&GaussElimination_test_obj);
+        test_obj_1.setEqSolverStrategy(Gauss_test_obj);
         test_obj_1.NewtonsCalcInterpolatingPoly(x,
                                                 y,
                                                 4,
@@ -106,7 +104,7 @@ int main(int argc, char *argv[])
         y[3] = 0.5;
 
         Interpolation test_obj_1;
-        test_obj_1.setEqSolverStrategy(&GaussElimination_test_obj);
+        test_obj_1.setEqSolverStrategy(Gauss_test_obj);
         test_obj_1.CSplineCalculateCoeffs(x, y, 4, coeffs);
         for(int i =0; i < 12; i+=4)
         {
@@ -114,5 +112,7 @@ int main(int argc, char *argv[])
         }
     }
 
-    return a.exec();
+    delete Gauss_test_obj;
+    Gauss_test_obj = NULL;
+
 }
