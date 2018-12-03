@@ -11,20 +11,22 @@ int main(int argc, char *argv[])
 
    /* gauss elimination testing */
     GaussElimination GaussElimination_test_obj;
-    int size = 3;
-    double equ1[3]= {70,1,0};
-    double equ2[3]= {60,-1,1};
-    double equ3[3]= {40,0,-1};
-    double forcingF[3] = {636,518,307};
-    double equroots[3];
+    int size = 4;
+    double equ1[4]= {1,-1,2,1};
+    double equ2[4]= {3,2,1,4};
+    double equ3[4]= {5,8,6,3};
+    double equ4[4]= {4,2,5,3};
+    double forcingF[4] = {1,1,1,-1};
+    double equroots[4];
 
     double **equations = new double *[size];
     equations[0] = equ1;
     equations[1] = equ2;
     equations[2] = equ3;
+    equations[3] = equ4;
 
     GaussElimination_test_obj.solveEquations(equations,forcingF,size,equroots);
-    std::cout<<"x0="<<equroots[0]<<", x1="<<equroots[1]<<", x2="<<equroots[2]<<"\n";
+    std::cout<<"x0="<<equroots[0]<<", x1="<<equroots[1]<<", x2="<<equroots[2]<<", x3="<<equroots[3]<<"\n";
     /* expected output values x0=8.59412, x1=34.4118, x2=36.7647 */
     delete [] equations;
     /* gauss elimination testing end */
