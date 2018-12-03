@@ -85,7 +85,7 @@ void GaussElimination::pivot(double **coefficients, int size, int currentIndex, 
         if (tmp > biggest_element)
         {
             biggest_element = tmp;
-            biggestElementIdx = rowsPtrArr[row_i];
+            biggestElementIdx = row_i;
         }
     }
     /* replace the current row index with the row index that contain the biggest pivot element */

@@ -17,6 +17,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += \
         main.cpp \
     gausselimination.cpp \
+    interpolation.cpp \
     linearregression.cpp
 
 # Default rules for deployment.
@@ -27,4 +28,5 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 HEADERS += \
     gausselimination.h \
     linearregression.h \
+    interpolation.h \
     iequationssolver.h
