@@ -19,6 +19,7 @@ SOURCES += \
     gausselimination.cpp \
     interpolation.cpp \
     linearregression.cpp \
+    csvreader.cpp \
     gaussseidel.cpp
 
 # Default rules for deployment.
@@ -27,6 +28,7 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 HEADERS += \
+    csvreader.h \
     gausselimination.h \
     linearregression.h \
     interpolation.h \
