@@ -123,12 +123,12 @@ int main(int argc, char *argv[])
         CSVReader reader("C:/Users/mhassoub/Desktop/Nile masters stuff/3rd term/sceintific computing/assignements/assignement_1/coursework_1/part three datasets/sp1.csv");
 
         // Get the data from CSV File
-        std::vector<std::vector<std::string> > dataList = reader.getData();
+        std::vector<std::vector<double> > dataList = reader.getData();
 
         // Print the content of row by row on screen
-        for(std::vector<std::string> vec : dataList)
+        for(std::vector<double> vec : dataList)
         {
-            for(std::string data : vec)
+            for(double data : vec)
             {
                 std::cout<<data << " , ";
             }
