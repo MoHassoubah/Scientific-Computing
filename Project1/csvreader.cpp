@@ -28,7 +28,8 @@ std::vector<std::vector<double> > CSVReader::getData()
             csvRow.push_back(std::stod(token));
 
         }
-        dataList.push_back(csvRow);
+        if(csvRow.size() != 0)
+            dataList.push_back(csvRow);
     }
     std::cout << "dataList size"<< dataList.size() << '\n';
     // Close the File

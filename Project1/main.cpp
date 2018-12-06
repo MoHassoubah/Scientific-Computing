@@ -65,56 +65,32 @@ int main(int argc, char *argv[])
     /* linear regression testing End */
 
     {
-    /* Test the newton interpolation */
-        double x[4];
-        x[0] = 1;
-        x[1] = 4;
-        x[2] = 6;
-        x[3] = 5;
+        /* Test the newton interpolation */
+        std::vector<std::vector<double> > dataList = {{1,0},{4,1.386294},{6,1.791759},{5,1.609438}};
 
-        double y[4];
-        y[0] = 0;
-        y[1] = 1.386294;
-        y[2] = 1.791759;
-        y[3] = 1.609438;
-
-        double y_of_x, error ;
+        double y_of_x, error, finite_coeff[4] ;
 
         int order = 3;
         Interpolation test_obj_1;
         test_obj_1.setEqSolverStrategy(Gauss_test_obj);
-        test_obj_1.NewtonsCalcInterpolatingPoly(x,
-                                                y,
-                                                4,
-                                                order, 2, &y_of_x, &error);
+        test_obj_1.NewtonsCalcInterpolatingPoly(dataList,
+                                                order, 2, &y_of_x, &error,finite_coeff);
         std::cout<<"f"<<order<<"(2)="<<y_of_x<<", R"<<order-1<<"="<<error<<"\n";
+        std::cout<< "finite coeffs:"<<finite_coeff[0]<<" , "<<finite_coeff[1]<<" , "<<finite_coeff[2]<<" , "<<finite_coeff[3]<<" \n";
     }
 
     {
-        IEquationSolver *Gauss_test_obj = new GaussSeidel();
         /* test cubic spline */
-        double x[4];
-        x[0] = 3;
-        x[1] = 4.5;
-        x[2] = 7;
-        x[3] = 9;
-
-        double y[4],coeffs[12];
-        y[0] = 2.5;
-        y[1] = 1;
-        y[2] = 2.5;
-        y[3] = 0.5;
+        double coeffs[4];
+        std::vector<std::vector<double> > dataList = {{3,2.5},{4.5,1},{7,2.5},{9,0.5}};
 
         Interpolation test_obj_1;
         test_obj_1.setEqSolverStrategy(Gauss_test_obj);
-        test_obj_1.CSplineCalculateCoeffs(x, y, 4, coeffs);
+        test_obj_1.CSplineCalculateCoeffs(dataList, coeffs);
         for(int i =0; i < 12; i+=4)
         {
             std::cout<<"coeffs->>"<<i/4<< "  "<<"a = "<<coeffs[i]<< "  "<<"b="<<coeffs[i+1]<< "  "<<"c="<<coeffs[i+2]<< "  "<<"d="<<coeffs[i+3]<<"\n";
         }
-
-        delete Gauss_test_obj;
-        Gauss_test_obj = NULL;
     }
 
     {
@@ -130,9 +106,85 @@ int main(int argc, char *argv[])
         {
             for(double data : vec)
             {
-                std::cout<<data << " , ";
+                std::cout<<"data out"<<data << " , ";
             }
             std::cout<<std::endl;
+        }
+        std::cout<<"std sting test"<<std::to_string(12341254) + " sadf sdf\n";
+    }
+
+    {
+        /* test output in csv file */
+        std::ofstream myfile;
+        myfile.open ("example.csv");
+        myfile << "This is the first cell in the first column.\n";
+        myfile << "a,b,c\n";
+        myfile << "c,s,v\n";
+        myfile << "1,a,3.456\n";
+        myfile << "semi;colon";
+        myfile.close();
+
+        //std::cout<<str" , " + "fskjsf" + "4345980345";
+    }
+
+    {
+        /* Run Part 3 exercise */
+        Interpolation test_obj_1;
+        test_obj_1.setEqSolverStrategy(Gauss_test_obj);
+
+        for(int i = 1; i <=4; i++)
+        {
+            double y_of_x, error ;
+
+            double *coeffs;
+            double *finite_coeff;
+
+            CSVReader reader("part three datasets/sp" + std::to_string(i) + ".csv");
+
+            // Get the data from CSV File
+            std::vector<std::vector<double>> dataList = reader.getData();
+
+            coeffs = new double [4*(dataList.size()-1)];
+            finite_coeff = new double [dataList.size()];
+
+            test_obj_1.CSplineCalculateCoeffs(dataList, coeffs);
+
+            test_obj_1.NewtonsCalcInterpolatingPoly(dataList,
+                                                    dataList.size()-1,
+                                                    2, &y_of_x, &error,finite_coeff); // 2 dummy value
+
+            std::ofstream myfile_spline;
+            myfile_spline.open ("sp"+ std::to_string(i) + "_spline"+ ".csv");
+            myfile_spline << "a3,a2,a1,a0,st_range,end_range\n";
+
+            for(int j =0; j < (4*(dataList.size()-1)); j+=4)
+            {
+                myfile_spline<< std::to_string(coeffs[j])+ "," + std::to_string(coeffs[j+1])+ "," + std::to_string(coeffs[j+2])
+                        + "," + std::to_string(coeffs[j+3])+ "," +
+                        std::to_string(dataList[j/4][0])+ "," + std::to_string(dataList[(j/4)+1][0]) + "\n";
+            }
+            myfile_spline.close();
+            delete[] coeffs;
+
+            std::ofstream myfile_newton;
+            myfile_newton.open ("sp"+ std::to_string(i) + "_newton"+ ".csv");
+
+            for(int j =0; j < dataList.size(); j++)
+            {
+                myfile_newton << "b" + std::to_string(j) + ",";
+            }
+
+            myfile_newton << "order";
+
+            myfile_newton << "\n";
+
+            for(int j =0; j < dataList.size(); j++)
+            {
+                myfile_newton<< std::to_string(finite_coeff[j]) + ",";
+            }
+            myfile_newton<< std::to_string(dataList.size()-1);
+            myfile_newton.close();
+            delete[] finite_coeff;
         }
     }
 
