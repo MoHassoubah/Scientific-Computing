@@ -94,23 +94,23 @@ int main(int argc, char *argv[])
     }
 
     {
-        /* test csv reader */
-        // Creating an object of CSVWriter
-        CSVReader reader("C:/Users/mhassoub/Desktop/Nile masters stuff/3rd term/sceintific computing/assignements/assignement_1/coursework_1/part three datasets/sp1.csv");
+//        /* test csv reader */
+//        // Creating an object of CSVWriter
+//        CSVReader reader("C:/Users/mhassoub/Desktop/Nile masters stuff/3rd term/sceintific computing/assignements/assignement_1/coursework_1/part three datasets/sp1.csv");
 
-        // Get the data from CSV File
-        std::vector<std::vector<double> > dataList = reader.getData();
+//        // Get the data from CSV File
+//        std::vector<std::vector<double> > dataList = reader.getData();
 
-        // Print the content of row by row on screen
-        for(std::vector<double> vec : dataList)
-        {
-            for(double data : vec)
-            {
-                std::cout<<"data out"<<data << " , ";
-            }
-            std::cout<<std::endl;
-        }
-        std::cout<<"std sting test"<<std::to_string(12341254) + " sadf sdf\n";
+//        // Print the content of row by row on screen
+//        for(std::vector<double> vec : dataList)
+//        {
+//            for(double data : vec)
+//            {
+//                std::cout<<"data out"<<data << " , ";
+//            }
+//            std::cout<<std::endl;
+//        }
+//        std::cout<<"std sting test"<<std::to_string(12341254) + " sadf sdf\n";
     }
 
     {
@@ -139,7 +139,7 @@ int main(int argc, char *argv[])
             double *coeffs;
             double *finite_coeff;
 
-            CSVReader reader("part three datasets/sp" + std::to_string(i) + ".csv");
+            CSVReader reader("part_three_datasets/sp" + std::to_string(i) + ".csv");
 
             // Get the data from CSV File
             std::vector<std::vector<double>> dataList = reader.getData();
@@ -155,12 +155,12 @@ int main(int argc, char *argv[])
 
             std::ofstream myfile_spline;
             myfile_spline.open ("sp"+ std::to_string(i) + "_spline"+ ".csv");
-            myfile_spline << "a3,a2,a1,a0,st_range,end_range\n";
+            myfile_spline << "a0,a1,a2,a3,st_range,end_range\n";
 
             for(int j =0; j < (4*(dataList.size()-1)); j+=4)
             {
-                myfile_spline<< std::to_string(coeffs[j])+ "," + std::to_string(coeffs[j+1])+ "," + std::to_string(coeffs[j+2])
-                        + "," + std::to_string(coeffs[j+3])+ "," +
+                myfile_spline<< std::to_string(coeffs[j+3])+ "," + std::to_string(coeffs[j+2])+ "," + std::to_string(coeffs[j+1])
+                        + "," + std::to_string(coeffs[j])+ "," +
                         std::to_string(dataList[j/4][0])+ "," + std::to_string(dataList[(j/4)+1][0]) + "\n";
             }
             myfile_spline.close();
