@@ -146,7 +146,7 @@ def plot_newton_equation(equation_coeff, x_points, data_range, step_size=0.01):
 # show()
 
 #loop on the files inside a folder and draw the figname_function.csv
-path = "./project1/part three datasets/"
+path = "./project1/part_three_datasets/"
 for (dirpath, dirnames, filenames) in walk(path):
     for filename in filenames:
         fig_function = filename.split('_')
