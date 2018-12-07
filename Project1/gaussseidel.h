@@ -14,7 +14,8 @@ public:
     void setToleranceValue(double tolerance) {m_tolerance = tolerance;}
 
 private:
-    bool checkZerosDiagonalCoefficients(double **coeffiecients, int size);
+    bool reorganizeZerosDiagonalCoefficients(double **coeffiecients, int *indices, int size);
+    bool changeRowsOrder(double **matrix, int *indices, int size, int current);
 
     double m_tolerance = 10;   /* default tolerance value */
 };

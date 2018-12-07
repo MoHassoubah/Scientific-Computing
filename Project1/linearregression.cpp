@@ -1,8 +1,8 @@
 #include "linearregression.h"
 
-LinearRegression::LinearRegression()
+LinearRegression::LinearRegression(IEquationSolver *s)
 {
-
+    m_eqsSolver = s;
 }
 
 char LinearRegression::calculateCoeffs(double **x, double *y, int no_of_points, int order, double *coeffs){
