@@ -144,6 +144,8 @@ int main(int argc, char *argv[])
             // Get the data from CSV File
             std::vector<std::vector<double>> dataList = reader.getData();
 
+            sort(dataList.begin(), dataList.end());
+
             coeffs = new double [4*(dataList.size()-1)];
             finite_coeff = new double [dataList.size()];
 
@@ -190,5 +192,7 @@ int main(int argc, char *argv[])
 
     delete Gauss_test_obj;
     Gauss_test_obj = NULL;
+
+    return 0;
 
 }
