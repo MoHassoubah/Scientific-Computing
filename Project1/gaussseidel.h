@@ -15,7 +15,7 @@ public:
 
 private:
     bool reorganizeZerosDiagonalCoefficients(double **coeffiecients, int *indices, int size);
-    bool changeRowsOrder(double **matrix, int *indices, int size, int current);
+    bool changeRowsOrder(double **matrix, int *indices, int size, int currentRow);
 
     double m_tolerance = 10;   /* default tolerance value */
 };

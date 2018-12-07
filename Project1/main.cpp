@@ -17,7 +17,7 @@ int main(int argc, char *argv[])
     double equ3[4]= {5,8,6,3};
     double equ4[4]= {4,2,5,3};
     double forcingF[4] = {1,1,1,-1};
-    double equroots[4];
+    double equroots[4] = {0.0, 0.0, 0.0, 0.0};
 
     double **equations = new double *[size];
     equations[0] = equ1;
