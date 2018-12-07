@@ -154,7 +154,7 @@ int main(int argc, char *argv[])
                                                     2, &y_of_x, &error,finite_coeff); // 2 dummy value
 
             std::ofstream myfile_spline;
-            myfile_spline.open ("sp"+ std::to_string(i) + "_spline"+ ".csv");
+            myfile_spline.open ("part_three_datasets/sp"+ std::to_string(i) + "_spline"+ ".csv");
             myfile_spline << "a0,a1,a2,a3,st_range,end_range\n";
 
             for(int j =0; j < (4*(dataList.size()-1)); j+=4)
@@ -167,7 +167,7 @@ int main(int argc, char *argv[])
             delete[] coeffs;
 
             std::ofstream myfile_newton;
-            myfile_newton.open ("sp"+ std::to_string(i) + "_newton"+ ".csv");
+            myfile_newton.open ("part_three_datasets/sp"+ std::to_string(i) + "_newton"+ ".csv");
 
             for(int j =0; j < dataList.size(); j++)
             {
