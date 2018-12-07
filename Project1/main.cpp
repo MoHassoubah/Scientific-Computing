@@ -79,24 +79,24 @@ int main(int argc, char *argv[])
         std::cout<< "finite coeffs:"<<finite_coeff[0]<<" , "<<finite_coeff[1]<<" , "<<finite_coeff[2]<<" , "<<finite_coeff[3]<<" \n";
     }
 
-    {
-        /* test cubic spline */
-        double coeffs[4];
-        std::vector<std::vector<double> > dataList = {{3,2.5},{4.5,1},{7,2.5},{9,0.5}};
+//    {
+//        /* test cubic spline */
+//        double coeffs[4];
+//        std::vector<std::vector<double> > dataList = {{3,2.5},{4.5,1},{7,2.5},{9,0.5}};
 
-        Interpolation test_obj_1;
-        test_obj_1.setEqSolverStrategy(Gauss_test_obj);
-        test_obj_1.CSplineCalculateCoeffs(dataList, coeffs);
-        for(int i =0; i < 12; i+=4)
-        {
-            std::cout<<"coeffs->>"<<i/4<< "  "<<"a = "<<coeffs[i]<< "  "<<"b="<<coeffs[i+1]<< "  "<<"c="<<coeffs[i+2]<< "  "<<"d="<<coeffs[i+3]<<"\n";
-        }
-    }
+//        Interpolation test_obj_1;
+//        test_obj_1.setEqSolverStrategy(Gauss_test_obj);
+//        test_obj_1.CSplineCalculateCoeffs(dataList, coeffs);
+//        for(int i =0; i < 12; i+=4)
+//        {
+//            std::cout<<"coeffs->>"<<i/4<< "  "<<"a = "<<coeffs[i]<< "  "<<"b="<<coeffs[i+1]<< "  "<<"c="<<coeffs[i+2]<< "  "<<"d="<<coeffs[i+3]<<"\n";
+//        }
+//    }
 
-    {
+//    {
 //        /* test csv reader */
 //        // Creating an object of CSVWriter
-//        CSVReader reader("C:/Users/mhassoub/Desktop/Nile masters stuff/3rd term/sceintific computing/assignements/assignement_1/coursework_1/part three datasets/sp1.csv");
+//        CSVReader reader("C:/Users/mhassoub/Desktop/Nile masters stuff/3rd term/sceintific computing/assignements/assignement_1/coursework_1/part three datasets/sp1.csv",",");
 
 //        // Get the data from CSV File
 //        std::vector<std::vector<double> > dataList = reader.getData();
@@ -111,7 +111,7 @@ int main(int argc, char *argv[])
 //            std::cout<<std::endl;
 //        }
 //        std::cout<<"std sting test"<<std::to_string(12341254) + " sadf sdf\n";
-    }
+//    }
 
     {
         /* test output in csv file */
@@ -129,8 +129,8 @@ int main(int argc, char *argv[])
 
     {
         /* Run Part 3 exercise */
-        Interpolation test_obj_1;
-        test_obj_1.setEqSolverStrategy(Gauss_test_obj);
+        Interpolation test_obj_int;
+        test_obj_int.setEqSolverStrategy(Gauss_test_obj);
 
         for(int i = 1; i <=4; i++)
         {
@@ -139,7 +139,7 @@ int main(int argc, char *argv[])
             double *coeffs;
             double *finite_coeff;
 
-            CSVReader reader("part_three_datasets/sp" + std::to_string(i) + ".csv");
+            CSVReader reader("part_three_datasets/sp" + std::to_string(i) + ".csv",",");
 
             // Get the data from CSV File
             std::vector<std::vector<double>> dataList = reader.getData();
@@ -147,9 +147,9 @@ int main(int argc, char *argv[])
             coeffs = new double [4*(dataList.size()-1)];
             finite_coeff = new double [dataList.size()];
 
-            test_obj_1.CSplineCalculateCoeffs(dataList, coeffs);
+            test_obj_int.CSplineCalculateCoeffs(dataList, coeffs);
 
-            test_obj_1.NewtonsCalcInterpolatingPoly(dataList,
+            test_obj_int.NewtonsCalcInterpolatingPoly(dataList,
                                                     dataList.size()-1,
                                                     2, &y_of_x, &error,finite_coeff); // 2 dummy value
 
