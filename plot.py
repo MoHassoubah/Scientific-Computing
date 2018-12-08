@@ -107,7 +107,7 @@ def plot_linear_equation(equation_coeff, data_range=[-1000, 1000], data_range2=[
 # x_points : x0,x1,x2,...xn
 # data_range: [start of interval, end of interval]
 # step_size : give if data step size is very small
-def plot_newton_equation(equation_coeff, x_points, data_range, step_size=0.01):
+def plot_newton_equation(equation_coeff, x_points, data_range, step_size=0.01,color='r'):
     x = arange(float(data_range[0]), float(data_range[1]),
                step_size)  # get values between data_range[1] and data_range[1] with 0.01 step and set to y
     y = float(equation_coeff[0])
@@ -118,7 +118,7 @@ def plot_newton_equation(equation_coeff, x_points, data_range, step_size=0.01):
             x_fun *= (x - x_points[i])
         y += float(equation_coeff[idx]) * x_fun
         i += 1
-    plot(x, y)
+    plot(x, y, color)
 
     return
 
@@ -160,7 +160,9 @@ for (dirpath, dirnames, filenames) in walk(path):
             #plot Newton data
             if fig_function[1] == "newton.csv":
                 figure(fig_function[0])
-                print("newton")
+                row_arr = read_equation_coeff_from_csv(filename)
+                points = read_points_from_csv(path+fig_function[0]+'.csv')
+                plot_newton_equation(row_arr[0][0:-1], points[0], [min(points[0]),max(points[0])])
 
             #plot spline data
             elif fig_function[1] == "spline.csv":
