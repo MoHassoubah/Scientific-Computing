@@ -122,7 +122,6 @@ char Interpolation::NewtonsCalcInterpolatingPoly(std::vector<std::vector<double>
 
     /* set to invalid values */
     *yint = std::numeric_limits<double>::max();
-    *e = std::numeric_limits<double>::max();
 
     finite_diffs[0] = finite_diff_1st_row;
     for (int i =1; i<order_plus_1; i++)
@@ -157,7 +156,7 @@ char Interpolation::NewtonsCalcInterpolatingPoly(std::vector<std::vector<double>
         }
 
         double xterm = 1;
-        double yint_loc[order_plus_1], ea_loc[order];
+        double yint_loc[order_plus_1];
 
         yint_loc[0] = finite_diffs[0][0];
 
@@ -166,10 +165,9 @@ char Interpolation::NewtonsCalcInterpolatingPoly(std::vector<std::vector<double>
         {
             xterm = xterm * (xi - dataList[i-1][0]);
             yint_loc[i] = yint_loc[i-1] + (finite_diffs[0][i] * xterm);
-            ea_loc[i-1] = yint_loc[i] - yint_loc[i-1];
+            e[i-1] = yint_loc[i] - yint_loc[i-1];
         }
         *yint = yint_loc[order_plus_1 -1];
-        *e = ea_loc[order -1];
     }
     else
     {
