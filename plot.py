@@ -111,13 +111,10 @@ def plot_newton_equation(equation_coeff, x_points, data_range, step_size=0.01,co
     x = arange(float(data_range[0]), float(data_range[1]),
                step_size)  # get values between data_range[1] and data_range[1] with 0.01 step and set to y
     y = float(equation_coeff[0])
-    i = 1
+    x_fun =1
     for idx in range(1, len(equation_coeff)):
-        x_fun = 1
-        for x_idx in range(0,i):
-            x_fun *= (x - x_points[i])
+        x_fun *= (x - x_points[idx-1])
         y += float(equation_coeff[idx]) * x_fun
-        i += 1
     plot(x, y, color)
 
     return

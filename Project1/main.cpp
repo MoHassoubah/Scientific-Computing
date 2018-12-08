@@ -4,7 +4,15 @@
 #include "linearregression.h"
 #include "interpolation.h"
 #include "csvreader.h"
+#include<iomanip>
 
+std::string convert(float value)
+{
+  std::stringstream ss;
+  ss << std::setprecision(std::numeric_limits<float>::digits10+1);
+  ss << value;
+  return ss.str();
+}
 
 int main(int argc, char *argv[])
 {
@@ -144,7 +152,7 @@ int main(int argc, char *argv[])
             // Get the data from CSV File
             std::vector<std::vector<double>> dataList = reader.getData();
 
-            sort(dataList.begin(), dataList.end());
+//            sort(dataList.begin(), dataList.end());
 
             coeffs = new double [4*(dataList.size()-1)];
             finite_coeff = new double [dataList.size()];
@@ -161,9 +169,9 @@ int main(int argc, char *argv[])
 
             for(int j =0; j < (4*(dataList.size()-1)); j+=4)
             {
-                myfile_spline<< std::to_string(coeffs[j+3])+ "," + std::to_string(coeffs[j+2])+ "," + std::to_string(coeffs[j+1])
-                        + "," + std::to_string(coeffs[j])+ "," +
-                        std::to_string(dataList[j/4][0])+ "," + std::to_string(dataList[(j/4)+1][0]) + "\n";
+                myfile_spline<< convert(coeffs[j+3])+ "," + convert(coeffs[j+2])+ "," + convert(coeffs[j+1])
+                        + "," + convert(coeffs[j])+ "," +
+                        convert(dataList[j/4][0])+ "," + convert(dataList[(j/4)+1][0]) + "\n";
             }
             myfile_spline.close();
             delete[] coeffs;
@@ -182,7 +190,7 @@ int main(int argc, char *argv[])
 
             for(int j =0; j < dataList.size(); j++)
             {
-                myfile_newton<< std::to_string(finite_coeff[j]) + ",";
+                myfile_newton<<convert(finite_coeff[j]) + ",";
             }
             myfile_newton<< std::to_string(dataList.size()-1);
             myfile_newton.close();

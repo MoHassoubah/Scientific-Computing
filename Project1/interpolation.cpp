@@ -150,7 +150,8 @@ char Interpolation::NewtonsCalcInterpolatingPoly(std::vector<std::vector<double>
                 }
                 else
                 {
-                    finite_diffs[i][j] = std::numeric_limits<double>::max();
+                    finite_diffs[i][j] = (finite_diffs[i+1][j-1] - finite_diffs[i][j-1]) /
+                            m_tolerance;
                 }
             }
         }
