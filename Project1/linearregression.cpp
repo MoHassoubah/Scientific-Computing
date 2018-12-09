@@ -53,6 +53,11 @@ char LinearRegression::calculateCoeffs(double **x, double *y, int no_of_points, 
     /*solve the system of linear equations */
     m_eqsSolver->solveEquations(equations_coeffs, equations_Forcing_coeff, size, coeffs);
 
+    for (int i =0; i<size; i++)
+    {
+        delete [] equations_coeffs[i];
+    }
+    delete [] equations_coeffs;
 
     return error;
 }

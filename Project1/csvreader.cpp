@@ -20,7 +20,7 @@ std::vector<std::vector<double> > CSVReader::getData()
 
         while(std::getline(ss, token, ','))
         {
-            if((token == "x") || (token == "y"))
+            if((token == "x") || (token == "y") || (token == "x1") || (token == "x2"))
             {
                 //std::cout << "token" << '\n';
                 continue;
@@ -31,7 +31,7 @@ std::vector<std::vector<double> > CSVReader::getData()
         if(csvRow.size() != 0)
             dataList.push_back(csvRow);
     }
-    std::cout << "dataList size"<< dataList.size() << '\n';
+    std::cout << "dataList size "<< dataList.size() << '\n';
     // Close the File
     file.close();
 

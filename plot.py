@@ -5,7 +5,7 @@ import csv
 from os import  walk
 from numpy import *
 from matplotlib.pyplot import plot, show, figure, axes
-
+from mpl_toolkits.mplot3d import axes3d, Axes3D
 
 
 # read CSV file and define column size & row size &
@@ -37,19 +37,17 @@ def read_equation_coeff_from_csv(file_name):
     return csv_list
 
 
-def plot_3d_points(arr_of_elements):
-    ax = axes(projection='3d')
+def plot_3d_points(arr_of_elements,ax):
 
-    # Data for three-dimensional scattered points
-    ax.scatter3D(arr_of_elements[0], arr_of_elements[1], arr_of_elements[2], c=arr_of_elements[2], cmap='Greens');
+
     return
 
 
-def plot_points(arr_of_elements, color='r'):
+def plot_points(arr_of_elements,ax=0, color='r'):
     if len(arr_of_elements) == 2:
         plot(arr_of_elements[0], arr_of_elements[1], color + 'o')
-    elif len(arr_of_elements) == 3:
-        plot_3d_points(arr_of_elements)  # give this a 3D option
+    # elif len(arr_of_elements) == 3:
+        # plot_3d_points(arr_of_elements,ax)  # give this a 3D option
     return
 
 
@@ -71,8 +69,8 @@ def plot_polynomial_equation(equation_coeff, data_range, step_size=0.01,option =
     return
 
 
-def plot_3d_equation(arr_of_elements):
-    ax = axes(projection='3d')
+def plot_3d_equation(arr_of_elements,ax):
+
 
     # Data for a three-dimensional line
     ax.plot3D(arr_of_elements[0], arr_of_elements[1], arr_of_elements[2], 'gray')
@@ -83,7 +81,7 @@ def plot_3d_equation(arr_of_elements):
 # equation_type : order 1,2
 # data_range: [start of interval, end of interval]
 # step_size : give if data step size is very small
-def plot_linear_equation(equation_coeff, data_range=[-1000, 1000], data_range2=[-1000, 1000], step_size=0.01):
+def plot_linear_equation(equation_coeff, points, step_size=0.01, data_range=[-1000, 1000], data_range2=[-1000, 1000]):
     if (len(equation_coeff) == 2):
         x = arange(float(data_range[0]), float(data_range[1]),
                    step_size)  # get values between -10 and 10 with 0.01 step and set to y
@@ -99,7 +97,11 @@ def plot_linear_equation(equation_coeff, data_range=[-1000, 1000], data_range2=[
         x2 = arange(float(data_range2[0]), float(data_range2[1]), step_size2)
         y = float(equation_coeff[0]) + x1 * float(equation_coeff[1]) + x2 * float(equation_coeff[1])
 
-        plot_3d_equation([x1, x2, y])
+        ax = axes(projection='3d')
+        plot_3d_equation([x1, x2, y],ax)
+        # Data for a three-dimensional line
+        ax.plot3D(x1, x2, y, 'gray')
+        ax.scatter3D(points[0], points[1], points[2], c=points[2], cmap='Greens');
     return
 
 
@@ -289,4 +291,34 @@ for (dirpath, dirnames, filenames) in walk(path):
         else:
             print('Error wrong file name many _')
 show()
+#draw part two
 path = "./project1/part_two_datasets/"
+for (dirpath, dirnames, filenames) in walk(path):
+    for filename in filenames:
+        fig_function = filename.split('_')
+        filename = path + filename
+        # draw raw data on newton and spline
+        if len(fig_function) == 1:
+            points = read_points_from_csv(filename)
+            figure(fig_function[0].split('.')[0] + '_linear_elimination')
+            plot_points(points, 'b')
+            figure(fig_function[0].split('.')[0] + '_linear_sidel')
+            plot_points(points, 'b')
+        elif len(fig_function) == 3:
+            #plot Newton data
+            points = read_points_from_csv(fig_function[0]+'.csv')
+            if "linear" in fig_function[1]:
+                if "elimination" in fig_function[2]:
+                    row_arr = read_equation_coeff_from_csv(filename)
+                    if len(row_arr[0]) == 2:
+                        step_size = (max(points[0]) - min(points[0])) / 1000  # equation
+                        figure(fig_function[0] + '_linear_elimination')
+                        plot_linear_equation(row_arr[0],points,step_size,[min(points[0]),max(points[0])])
+                    elif len(row_arr[0]) == 3:
+                        step_size = (max(points[0]) - min(points[0])) / 1000  # equation
+                        step_size = (max(points[1]) - min(points[1])) / 1000  # equation
+                        figure(fig_function[0] + '_linear_elimination')
+                        plot_linear_equation(row_arr[0],points, step_size, [min(points[0]), max(points[0])], [min(points[1]), max(points[1])])
+                    else:
+                        print("error! _linear_elimination")
+show()

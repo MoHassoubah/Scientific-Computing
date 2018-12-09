@@ -36,10 +36,10 @@ int main(int argc, char *argv[])
     std::cout << "x0=" << equroots[0] << ", x1=" << equroots[1] << ", x2=" << equroots[2] << "\n";
     /* expected output values x0=3, x1=-2.5, x2=7 */
     delete [] equations;
-    /* gauss seidel testing end */
 
-//    /* gauss elimination testing */
-//    IEquationSolver *Gauss_test_obj = new GaussSeidel();
+    /* gauss elimination testing */
+//    IEquationSolver *Gauss_test_obj = new GaussElimination();
+
 //    int size = 4;
 //    double equ1[4]= {1,-1,2,1};
 //    double equ2[4]= {3,2,1,4};
@@ -93,20 +93,20 @@ int main(int argc, char *argv[])
     /* expected output values a0=5, a1=4, a2=-3 */
     /* linear regression testing End */
 
-    {
-        /* Test the newton interpolation */
-        std::vector<std::vector<double> > dataList = {{1,0},{4,1.386294},{6,1.791759},{5,1.609438}};
+//    {
+//        /* Test the newton interpolation */
+//        std::vector<std::vector<double> > dataList = {{1,0},{4,1.386294},{6,1.791759},{5,1.609438}};
 
-        double y_of_x, error[3], finite_coeff[4] ;
+//        double y_of_x, error[3], finite_coeff[4] ;
 
-        int order = 3;
-        Interpolation test_obj_1;
-        test_obj_1.setEqSolverStrategy(Gauss_test_obj);
-        test_obj_1.NewtonsCalcInterpolatingPoly(dataList,
-                                                order, 2, &y_of_x, &error[0],finite_coeff);
-        std::cout<<"f"<<order<<"(2)="<<y_of_x<<", R"<<order-1<<"="<<error<<"\n";
-        std::cout<< "finite coeffs:"<<finite_coeff[0]<<" , "<<finite_coeff[1]<<" , "<<finite_coeff[2]<<" , "<<finite_coeff[3]<<" \n";
-    }
+//        int order = 3;
+//        Interpolation test_obj_1;
+//        test_obj_1.setEqSolverStrategy(Gauss_test_obj);
+//        test_obj_1.NewtonsCalcInterpolatingPoly(dataList,
+//                                                order, 2, &y_of_x, &error[0],finite_coeff);
+//        std::cout<<"f"<<order<<"(2)="<<y_of_x<<", R"<<order-1<<"="<<error<<"\n";
+//        std::cout<< "finite coeffs:"<<finite_coeff[0]<<" , "<<finite_coeff[1]<<" , "<<finite_coeff[2]<<" , "<<finite_coeff[3]<<" \n";
+//    }
 
 //    {
 //        /* test cubic spline */
@@ -142,20 +142,150 @@ int main(int argc, char *argv[])
 //        std::cout<<"std sting test"<<std::to_string(12341254) + " sadf sdf\n";
 //    }
 
-    {
-        /* test output in csv file */
-        std::ofstream myfile;
-        myfile.open ("example.csv");
-        myfile << "This is the first cell in the first column.\n";
-        myfile << "a,b,c\n";
-        myfile << "c,s,v\n";
-        myfile << "1,a,3.456\n";
-        myfile << "semi;colon";
-        myfile.close();
+//    {
+//        /* test output in csv file */
+//        std::ofstream myfile;
+//        myfile.open ("example.csv");
+//        myfile << "This is the first cell in the first column.\n";
+//        myfile << "a,b,c\n";
+//        myfile << "c,s,v\n";
+//        myfile << "1,a,3.456\n";
+//        myfile << "semi;colon";
+//        myfile.close();
 
-        //std::cout<<str" , " + "fskjsf" + "4345980345";
+//        //std::cout<<str" , " + "fskjsf" + "4345980345";
+//    }
+/***************** Run Part 2 exercise using elmination ***********************/
+    {
+        /* Run Part 2 exercise */
+        IEquationSolver *Gauss_sidel = new GaussSeidel();
+        LinearRegression test_obj_linear_elmination(Gauss_sidel);
+
+        for(int i = 1; i <=3; i++)
+        {
+            CSVReader reader("part_two_datasets/reg" + std::to_string(i) + ".csv",",");
+
+            // Get the data from CSV File
+            std::vector<std::vector<double>> dataList = reader.getData();
+
+            // input variables
+            int order = (dataList[0].size()-1);
+            int no_of_points = dataList.size();
+            double y[no_of_points];
+            double **x = new double *[no_of_points];
+
+            for (int idx=0; idx<no_of_points; idx++)
+            {
+                double *x_tmp = new double[order];
+                x[idx]  = x_tmp;
+            }
+
+            for (int idx=0; idx<no_of_points; idx++)
+            {
+               y[idx] = dataList[idx][order];
+               for(int col=0; col<order; col++){
+                    x[idx][col] = dataList[idx][col];
+               }
+            }
+
+
+            // output variables
+            double Linear_coeffs[order+1];
+            double poly_coeffs[order+1];
+
+            // Execute the Linear regrission
+            test_obj_linear_elmination.calculateCoeffs(x, y, no_of_points, order, Linear_coeffs);
+            std::cout<<"a0="<<convert(Linear_coeffs[0])<<", a1="<<convert(Linear_coeffs[1])<<", a2="<<convert(Linear_coeffs[2])<<"\n";
+
+//            // write output of linear Reg to CSV file
+            std::ofstream myfile_linearReg;
+            myfile_linearReg.open ("part_two_datasets/reg"+ std::to_string(i) + "_linear_sidel"+ ".csv");
+
+            for(int j =0; j < (order+1); j+=1)
+            {
+                if(j != order)
+                     myfile_linearReg << 'a' + std::to_string(j) + "," ;
+                else
+                     myfile_linearReg << 'a' + std::to_string(j) + "\n" ;
+            }
+
+            for(int j =0; j < (order+1); j+=1)
+            {
+                if(j != order)
+                    myfile_linearReg << convert(Linear_coeffs[j])+ ",";
+                else
+                     myfile_linearReg << convert(Linear_coeffs[j])+ "\n";
+            }
+            myfile_linearReg.close();
+        }
+    }
+    {
+        /* Run Part 2 exercise */
+        IEquationSolver *Gauss_elmination = new GaussElimination();
+        LinearRegression test_obj_linear_elmination(Gauss_elmination);
+
+        for(int i = 1; i <=3; i++)
+        {
+            CSVReader reader("part_two_datasets/reg" + std::to_string(i) + ".csv",",");
+
+            // Get the data from CSV File
+            std::vector<std::vector<double>> dataList = reader.getData();
+
+            // input variables
+            int order = (dataList[0].size()-1);
+            int no_of_points = dataList.size();
+            double y[no_of_points];
+            double **x = new double *[no_of_points];
+
+            for (int idx=0; idx<no_of_points; idx++)
+            {
+                double *x_tmp = new double[order];
+                x[idx]  = x_tmp;
+            }
+
+            for (int idx=0; idx<no_of_points; idx++)
+            {
+               y[idx] = dataList[idx][order];
+               for(int col=0; col<order; col++){
+                    x[idx][col] = dataList[idx][col];
+               }
+            }
+
+
+            // output variables
+            double Linear_coeffs[order+1];
+            double poly_coeffs[order+1];
+
+            // Execute the Linear regrission
+            test_obj_linear_elmination.calculateCoeffs(x, y, no_of_points, order, Linear_coeffs);
+            std::cout<<"a0="<<convert(Linear_coeffs[0])<<", a1="<<convert(Linear_coeffs[1])<<", a2="<<convert(Linear_coeffs[2])<<"\n";
+
+//            // write output of linear Reg to CSV file
+            std::ofstream myfile_linearReg;
+            myfile_linearReg.open ("part_two_datasets/reg"+ std::to_string(i) + "_linear_elimination"+ ".csv");
+
+            for(int j =0; j < (order+1); j+=1)
+            {
+                if(j != order)
+                     myfile_linearReg << 'a' + std::to_string(j) + "," ;
+                else
+                     myfile_linearReg << 'a' + std::to_string(j) + "\n" ;
+            }
+
+            for(int j =0; j < (order+1); j+=1)
+            {
+                if(j != order)
+                    myfile_linearReg << convert(Linear_coeffs[j])+ ",";
+                else
+                     myfile_linearReg << convert(Linear_coeffs[j])+ "\n";
+            }
+            myfile_linearReg.close();
+        }
     }
 
+
+
+/**************************  Run Part 3 exercise using elimination ***********************************/
     {
         /* Run Part 3 exercise */
         Interpolation test_obj_int;
@@ -229,7 +359,7 @@ int main(int argc, char *argv[])
         }
     }
 
-
+/**************************  Run Part 3 exercise using seidel ***********************************/
     {
         /* Run Part 3 exercise using seidel*/
         Interpolation test_obj_int_seidel;
