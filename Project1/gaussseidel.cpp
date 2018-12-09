@@ -10,13 +10,44 @@ GaussSeidel::GaussSeidel()
 
 char GaussSeidel::solveEquations(double **coefficients, double *forcingFunctions, int size, double *roots)
 {
+    /* run time mesurment for Gauss sidel */
+    std::chrono::high_resolution_clock::time_point t1 = std::chrono::high_resolution_clock::now();
+
     int *rowIndexArr = new int [size];
 
     if(!avoidZeroDiagonalAndMatchConvergenceCriterion(coefficients, rowIndexArr, size))
     {
         std::cout << "Error!: Gauss Seidel: Gauss Seidel will not converge.\n";
-        return -1;
+        for (int i =0; i<size;i++)
+        {
+            rowIndexArr[i] = i;
+        }
     }
+    /* order coeffiecents to avoid zero diagonal */
+    for(int i=0; i<size; i++)
+    {
+        if (coefficients[rowIndexArr[i]][i] == 0)
+        {
+            for(int j =i+1; j<size; j++)
+            {
+                if (coefficients[rowIndexArr[j]][i] !=0)
+                {
+                    int tmp_idx = rowIndexArr[j];
+                    rowIndexArr[j] = rowIndexArr[i];
+                    rowIndexArr[i] = tmp_idx;
+                }
+            }
+        }
+    }
+    /* check that all the diagonal elements are not zero */
+    for(int i=0; i<size; i++)
+    {
+        if (coefficients[rowIndexArr[i]][i] == 0)
+        {
+            return -1;
+        }
+     }
+
 
     for (int i = 0; i < size; ++i)
     {
@@ -32,6 +63,11 @@ char GaussSeidel::solveEquations(double **coefficients, double *forcingFunctions
         ++i;
     } while(i < MAX_ITERATIONS && !toleranceLimitReached);
 
+    /* run time mesurment for Gauss sidel */
+    std::chrono::high_resolution_clock::time_point t2 = std::chrono::high_resolution_clock::now();
+    auto duration = std::chrono::duration_cast<std::chrono::microseconds>( t2 - t1 ).count();
+
+    std::cout << "\nGausssidel take: "<<duration<<" us\n\n\n";
     return 0;
 }
 

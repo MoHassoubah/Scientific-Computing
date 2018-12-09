@@ -1,11 +1,12 @@
 #include "iostream"
 #include "gausselimination.h"
 #include "gaussseidel.h"
-#include "linearregression.h"
+#include "regression.h"
 #include "interpolation.h"
 #include "csvreader.h"
 #include <string>
 #include<iomanip>
+
 
 std::string convert(float value)
 {
@@ -18,81 +19,81 @@ std::string convert(float value)
 int main(int argc, char *argv[])
 {
     IEquationSolver *Gauss_elmination = new GaussElimination();
-    /* gauss seidel testing */
-    IEquationSolver *Gauss_test_obj = new GaussSeidel();
-    int size = 3;
-    double equ1[3]= {0.1, 7.0, -0.3};
-    double equ2[3]= {0.3, -0.2, 10};
-    double equ3[3]= {3.0, -0.1, -0.2};
-    double forcingF[3] = {-19.3, 71.4, 7.85};
-    double equroots[3] = {0.0, 0.0, 0.0};
-
-    double **equations = new double *[size];
-    equations[0] = equ1;
-    equations[1] = equ2;
-    equations[2] = equ3;
-
-    Gauss_test_obj->setToleranceValue(0);
-    Gauss_test_obj->solveEquations(equations,forcingF,size,equroots);
-    std::cout << "x0=" << equroots[0] << ", x1=" << equroots[1] << ", x2=" << equroots[2] << "\n";
-    /* expected output values x0=3, x1=-2.5, x2=7 */
-    delete [] equations;
-
-    /* gauss elimination testing */
-//    IEquationSolver *Gauss_test_obj = new GaussElimination();
-
-//    int size = 4;
-//    double equ1[4]= {1,-1,2,1};
-//    double equ2[4]= {3,2,1,4};
-//    double equ3[4]= {5,8,6,3};
-//    double equ4[4]= {4,2,5,3};
-//    double forcingF[4] = {1,1,1,-1};
-//    double equroots[4];
+//    /* gauss seidel testing */
+//    IEquationSolver *Gauss_test_obj = new GaussSeidel();
+//    int size = 3;
+//    double equ1[3]= {0.1, 7.0, -0.3};
+//    double equ2[3]= {0.3, -0.2, 10};
+//    double equ3[3]= {3.0, -0.1, -0.2};
+//    double forcingF[3] = {-19.3, 71.4, 7.85};
+//    double equroots[3] = {0.0, 0.0, 0.0};
 
 //    double **equations = new double *[size];
 //    equations[0] = equ1;
 //    equations[1] = equ2;
 //    equations[2] = equ3;
-//    equations[3] = equ4;
 
+//    Gauss_test_obj->setToleranceValue(0);
 //    Gauss_test_obj->solveEquations(equations,forcingF,size,equroots);
-//    std::cout<<"x0="<<equroots[0]<<", x1="<<equroots[1]<<", x2="<<equroots[2]<<", x3="<<equroots[3]<<"\n";
-//    /* expected output values x0=8.59412, x1=34.4118, x2=36.7647 */
+//    std::cout << "x0=" << equroots[0] << ", x1=" << equroots[1] << ", x2=" << equroots[2] << "\n";
+//    /* expected output values x0=3, x1=-2.5, x2=7 */
 //    delete [] equations;
-//    /* gauss elimination testing end */
 
-    /* linear regression testing */
-    int order = 2;
-    double point1[2]={0,0};
-    double point2[2]={2,1};
-    double point3[2]={2.5,2};
-    double point4[2]={1,3};
-    double point5[2]={4,6};
-    double point6[2]={7,2};
-    double **x = new double *[6];
-    x[0] = point1;
-    x[1] = point2;
-    x[2] = point3;
-    x[3] = point4;
-    x[4] = point5;
-    x[5] = point6;
-    int no_of_points = 6;
+//    /* gauss elimination testing */
+////    IEquationSolver *Gauss_test_obj = new GaussElimination();
 
-    double y[6];
-    y[0] = 5;
-    y[1] = 10;
-    y[2] = 9;
-    y[3] = 0;
-    y[4] = 3;
-    y[5] = 27;
+////    int size = 4;
+////    double equ1[4]= {1,-1,2,1};
+////    double equ2[4]= {3,2,1,4};
+////    double equ3[4]= {5,8,6,3};
+////    double equ4[4]= {4,2,5,3};
+////    double forcingF[4] = {1,1,1,-1};
+////    double equroots[4];
 
-    double output_coeffs[3];
+////    double **equations = new double *[size];
+////    equations[0] = equ1;
+////    equations[1] = equ2;
+////    equations[2] = equ3;
+////    equations[3] = equ4;
 
-    LinearRegression test_obj_1(Gauss_test_obj);
-    test_obj_1.calculateCoeffs(x,y,no_of_points,order,output_coeffs);
-    std::cout<<"a0="<<output_coeffs[0]<<", a1="<<output_coeffs[1]<<", a2="<<output_coeffs[2]<<"\n";
-    /* expected output values a0=5, a1=4, a2=-3 */
-    /* linear regression testing End */
+////    Gauss_test_obj->solveEquations(equations,forcingF,size,equroots);
+////    std::cout<<"x0="<<equroots[0]<<", x1="<<equroots[1]<<", x2="<<equroots[2]<<", x3="<<equroots[3]<<"\n";
+////    /* expected output values x0=8.59412, x1=34.4118, x2=36.7647 */
+////    delete [] equations;
+////    /* gauss elimination testing end */
+
+//    /* linear regression testing */
+//    int order = 2;
+//    double point1[2]={0,0};
+//    double point2[2]={2,1};
+//    double point3[2]={2.5,2};
+//    double point4[2]={1,3};
+//    double point5[2]={4,6};
+//    double point6[2]={7,2};
+//    double **x = new double *[6];
+//    x[0] = point1;
+//    x[1] = point2;
+//    x[2] = point3;
+//    x[3] = point4;
+//    x[4] = point5;
+//    x[5] = point6;
+//    int no_of_points = 6;
+
+//    double y[6];
+//    y[0] = 5;
+//    y[1] = 10;
+//    y[2] = 9;
+//    y[3] = 0;
+//    y[4] = 3;
+//    y[5] = 27;
+
+//    double output_coeffs[3];
+
+//    Regression test_obj_1(Gauss_test_obj);
+//    test_obj_1.calculateCoeffs(x,y,no_of_points,order,output_coeffs,Linear);
+//    std::cout<<"a0="<<output_coeffs[0]<<", a1="<<output_coeffs[1]<<", a2="<<output_coeffs[2]<<"\n";
+//    /* expected output values a0=5, a1=4, a2=-3 */
+//    /* linear regression testing End */
 
 //    {
 //        /* Test the newton interpolation */
@@ -157,10 +158,11 @@ int main(int argc, char *argv[])
 //        //std::cout<<str" , " + "fskjsf" + "4345980345";
 //    }
 /***************** Run Part 2 exercise using elmination ***********************/
+    /*************************** Linear ****************************************/
     {
-        /* Run Part 2 exercise */
+        /* Run Part 2 exercise Gauss sidel */
         IEquationSolver *Gauss_sidel = new GaussSeidel();
-        LinearRegression test_obj_linear_elmination(Gauss_sidel);
+        Regression test_obj_linear_elmination(Gauss_sidel);
 
         for(int i = 1; i <=3; i++)
         {
@@ -192,10 +194,9 @@ int main(int argc, char *argv[])
 
             // output variables
             double Linear_coeffs[order+1];
-            double poly_coeffs[order+1];
 
             // Execute the Linear regrission
-            test_obj_linear_elmination.calculateCoeffs(x, y, no_of_points, order, Linear_coeffs);
+            test_obj_linear_elmination.calculateCoeffs(x, y, no_of_points, order, Linear_coeffs, Linear);
             std::cout<<"a0="<<convert(Linear_coeffs[0])<<", a1="<<convert(Linear_coeffs[1])<<", a2="<<convert(Linear_coeffs[2])<<"\n";
 
 //            // write output of linear Reg to CSV file
@@ -215,15 +216,15 @@ int main(int argc, char *argv[])
                 if(j != order)
                     myfile_linearReg << convert(Linear_coeffs[j])+ ",";
                 else
-                     myfile_linearReg << convert(Linear_coeffs[j])+ "\n";
+                    myfile_linearReg << convert(Linear_coeffs[j])+ "\n";
             }
             myfile_linearReg.close();
         }
     }
     {
-        /* Run Part 2 exercise */
+        /* Run Part 2 exercise Gauss Elimination*/
         IEquationSolver *Gauss_elmination = new GaussElimination();
-        LinearRegression test_obj_linear_elmination(Gauss_elmination);
+        Regression test_obj_linear_elmination(Gauss_elmination);
 
         for(int i = 1; i <=3; i++)
         {
@@ -255,10 +256,9 @@ int main(int argc, char *argv[])
 
             // output variables
             double Linear_coeffs[order+1];
-            double poly_coeffs[order+1];
 
             // Execute the Linear regrission
-            test_obj_linear_elmination.calculateCoeffs(x, y, no_of_points, order, Linear_coeffs);
+            test_obj_linear_elmination.calculateCoeffs(x, y, no_of_points, order, Linear_coeffs, Linear);
             std::cout<<"a0="<<convert(Linear_coeffs[0])<<", a1="<<convert(Linear_coeffs[1])<<", a2="<<convert(Linear_coeffs[2])<<"\n";
 
 //            // write output of linear Reg to CSV file
@@ -278,12 +278,138 @@ int main(int argc, char *argv[])
                 if(j != order)
                     myfile_linearReg << convert(Linear_coeffs[j])+ ",";
                 else
-                     myfile_linearReg << convert(Linear_coeffs[j])+ "\n";
+                    myfile_linearReg << convert(Linear_coeffs[j])+ "\n";
             }
             myfile_linearReg.close();
         }
     }
+    /*************************** Linear END ****************************************/
+    /*************************** Polynomial  ****************************************/
+    {
+        /* Run Part 2 exercise Gauss sidel */
+        IEquationSolver *Gauss_sidel = new GaussSeidel();
+        Regression test_obj_linear_elmination(Gauss_sidel);
 
+        for(int i = 1; i <=2; i++)
+        {
+            CSVReader reader("part_two_datasets/reg" + std::to_string(i) + ".csv",",");
+
+            // Get the data from CSV File
+            std::vector<std::vector<double>> dataList = reader.getData();
+
+            // input variables
+            int order = (dataList.size()-2);
+            int no_of_points = dataList.size();
+            double y[no_of_points];
+            double **x = new double *[no_of_points];
+
+            for (int idx=0; idx<no_of_points; idx++)
+            {
+                double *x_tmp = new double[1];
+                x[idx]  = x_tmp;
+            }
+
+            for (int idx=0; idx<no_of_points; idx++)
+            {
+               y[idx] = dataList[idx][1];
+               for(int col=0; col<1; col++){
+                    x[idx][col] = dataList[idx][col];
+               }
+            }
+
+
+            // output variables
+            double Linear_coeffs[order+1];
+
+            // Execute the Linear regrission
+            test_obj_linear_elmination.calculateCoeffs(x, y, no_of_points, order, Linear_coeffs, Polynomial);
+            std::cout<<"a0="<<convert(Linear_coeffs[0])<<", a1="<<convert(Linear_coeffs[1])<<", a2="<<convert(Linear_coeffs[2])<<"\n";
+
+//            // write output of linear Reg to CSV file
+            std::ofstream myfile_linearReg;
+            myfile_linearReg.open ("part_two_datasets/reg"+ std::to_string(i) + "_polynomial_sidel"+ ".csv");
+
+            for(int j =0; j < (order+1); j+=1)
+            {
+                if(j != order)
+                     myfile_linearReg << 'a' + std::to_string(j) + "," ;
+                else
+                     myfile_linearReg << 'a' + std::to_string(j) + "\n" ;
+            }
+
+            for(int j =0; j < (order+1); j+=1)
+            {
+                if(j != order)
+                    myfile_linearReg << convert(Linear_coeffs[j])+ ",";
+                else
+                    myfile_linearReg << convert(Linear_coeffs[j])+ "\n";
+            }
+            myfile_linearReg.close();
+        }
+    }
+    {
+        /* Run Part 2 exercise Gauss Elimination*/
+        IEquationSolver *Gauss_elmination = new GaussElimination();
+        Regression test_obj_linear_elmination(Gauss_elmination);
+
+        for(int i = 1; i <=2; i++)
+        {
+            CSVReader reader("part_two_datasets/reg" + std::to_string(i) + ".csv",",");
+
+            // Get the data from CSV File
+            std::vector<std::vector<double>> dataList = reader.getData();
+
+            // input variables
+            int order = (dataList.size()-2);
+            int no_of_points = dataList.size();
+            double y[no_of_points];
+            double **x = new double *[no_of_points];
+
+            for (int idx=0; idx<no_of_points; idx++)
+            {
+                double *x_tmp = new double[1];
+                x[idx]  = x_tmp;
+            }
+
+            for (int idx=0; idx<no_of_points; idx++)
+            {
+               y[idx] = dataList[idx][1];
+               for(int col=0; col<1; col++){
+                    x[idx][col] = dataList[idx][col];
+               }
+            }
+
+
+            // output variables
+            double Linear_coeffs[order+1];
+
+            // Execute the Linear regrission
+            test_obj_linear_elmination.calculateCoeffs(x, y, no_of_points, order, Linear_coeffs, Polynomial);
+            std::cout<<"a0="<<convert(Linear_coeffs[0])<<", a1="<<convert(Linear_coeffs[1])<<", a2="<<convert(Linear_coeffs[2])<<"\n";
+
+//            // write output of linear Reg to CSV file
+            std::ofstream myfile_linearReg;
+            myfile_linearReg.open ("part_two_datasets/reg"+ std::to_string(i) + "_polynomial_elimination"+ ".csv");
+
+            for(int j =0; j < (order+1); j+=1)
+            {
+                if(j != order)
+                     myfile_linearReg << 'a' + std::to_string(j) + "," ;
+                else
+                     myfile_linearReg << 'a' + std::to_string(j) + "\n" ;
+            }
+
+            for(int j =0; j < (order+1); j+=1)
+            {
+                if(j != order)
+                    myfile_linearReg << convert(Linear_coeffs[j])+ ",";
+                else
+                    myfile_linearReg << convert(Linear_coeffs[j])+ "\n";
+            }
+            myfile_linearReg.close();
+        }
+    }
+    /*************************** Polynomial  END ****************************************/
 
 
 /**************************  Run Part 3 exercise using elimination ***********************************/
@@ -437,8 +563,8 @@ int main(int argc, char *argv[])
         }
     }
 
-    delete Gauss_test_obj;
-    Gauss_test_obj = NULL;
+//    delete Gauss_test_obj;
+//    Gauss_test_obj = NULL;
 
     return 0;
 

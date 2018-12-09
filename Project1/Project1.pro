@@ -18,9 +18,9 @@ SOURCES += \
         main.cpp \
     gausselimination.cpp \
     interpolation.cpp \
-    linearregression.cpp \
     csvreader.cpp \
-    gaussseidel.cpp
+    gaussseidel.cpp \
+    regression.cpp
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
@@ -30,7 +30,7 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 HEADERS += \
     csvreader.h \
     gausselimination.h \
-    linearregression.h \
     interpolation.h \
     iequationssolver.h \
-    gaussseidel.h
+    gaussseidel.h \
+    regression.h

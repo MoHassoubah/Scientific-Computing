@@ -7,6 +7,9 @@ GaussElimination::GaussElimination()
 
 char GaussElimination::solveEquations(double **coefficients, double * forcingFunctions, int size, double * roots)
 {
+    /* run time mesurment for Gauss elimination */
+    std::chrono::high_resolution_clock::time_point t1 = std::chrono::high_resolution_clock::now();
+
     char error = 0;
     int *rowIndexArr = new int [size];
     double *arrayOfRowBiggest = new double [size];
@@ -34,6 +37,11 @@ char GaussElimination::solveEquations(double **coefficients, double * forcingFun
     if (error == 0)
         substituteBack(coefficients, forcingFunctions, size, roots, rowIndexArr);
 
+    /* run time mesurment for Gauss elimination */
+    std::chrono::high_resolution_clock::time_point t2 = std::chrono::high_resolution_clock::now();
+    auto duration = std::chrono::duration_cast<std::chrono::microseconds>( t2 - t1 ).count();
+
+    std::cout << "\nGauss elimination take: "<<duration<<" us\n\n\n";
     return  error;
 }
 

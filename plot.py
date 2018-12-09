@@ -304,6 +304,10 @@ for (dirpath, dirnames, filenames) in walk(path):
             plot_points(points, 'b')
             figure(fig_function[0].split('.')[0] + '_linear_sidel')
             plot_points(points, 'b')
+            figure(fig_function[0].split('.')[0] + '_polynomial_elimination')
+            plot_points(points, 'b')
+            figure(fig_function[0].split('.')[0] + '_polynomial_sidel')
+            plot_points(points, 'b')
         elif len(fig_function) == 3:
             #plot Newton data
             points = read_points_from_csv(fig_function[0]+'.csv')
@@ -321,4 +325,30 @@ for (dirpath, dirnames, filenames) in walk(path):
                         plot_linear_equation(row_arr[0],points, step_size, [min(points[0]), max(points[0])], [min(points[1]), max(points[1])])
                     else:
                         print("error! _linear_elimination")
+                elif "sidel" in fig_function[2]:
+                    row_arr = read_equation_coeff_from_csv(filename)
+                    if len(row_arr[0]) == 2:
+                        step_size = (max(points[0]) - min(points[0])) / 1000  # equation
+                        figure(fig_function[0] + '_linear_sidel')
+                        plot_linear_equation(row_arr[0],points,step_size,[min(points[0]),max(points[0])])
+                    elif len(row_arr[0]) == 3:
+                        step_size = (max(points[0]) - min(points[0])) / 1000  # equation
+                        step_size = (max(points[1]) - min(points[1])) / 1000  # equation
+                        figure(fig_function[0] + '_linear_sidel')
+                        plot_linear_equation(row_arr[0],points, step_size, [min(points[0]), max(points[0])], [min(points[1]), max(points[1])])
+                    else:
+                        print("error! _sidel_elimination")
+            elif "polynomial" in fig_function[1]:
+                if "elimination" in fig_function[2]:
+                    row_arr = read_equation_coeff_from_csv(filename)
+                    step_size = (max(points[0]) - min(points[0])) / 1000  # equation
+                    figure(fig_function[0] + '_polynomial_elimination')
+                    plot_polynomial_equation(row_arr[0],[min(points[0]),max(points[0])],step_size)
+
+                elif "sidel" in fig_function[2]:
+                    row_arr = read_equation_coeff_from_csv(filename)
+                    step_size = (max(points[0]) - min(points[0])) / 1000  # equation
+                    figure(fig_function[0] + '_polynomial_sidel')
+                    plot_polynomial_equation(row_arr[0],[min(points[0]),max(points[0])],step_size)
+
 show()
