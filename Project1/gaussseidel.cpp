@@ -27,9 +27,8 @@ char GaussSeidel::solveEquations(double **coefficients, double *forcingFunctions
     bool toleranceLimitReached = false;
     do
     {
-        std::cout << "iteration #" << i << " --> ";
         toleranceLimitReached = iteration(coefficients, forcingFunctions, rowIndexArr, roots, size);
-        std::cout << std::endl;
+
         ++i;
     } while(i < MAX_ITERATIONS && !toleranceLimitReached);
 
@@ -96,11 +95,6 @@ bool GaussSeidel::iteration(double **coefficients, double *forcingFunctions, int
     for (int i = 0; i < size; ++i)
     {
         calculateXi(coefficients, forcingFunctions, rowIndexArr, roots, errorPercentages, size, i);
-    }
-
-    for (int i = 0; i < size; ++i)
-    {
-        std::cout << "E" << i << " = " << errorPercentages[i] << " | ";
     }
 
     return isToleranceValueReached(errorPercentages, size);
