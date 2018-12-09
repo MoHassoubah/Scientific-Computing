@@ -164,9 +164,11 @@ int main(int argc, char *argv[])
         IEquationSolver *Gauss_sidel = new GaussSeidel();
         Regression test_obj_linear_elmination(Gauss_sidel);
 
+        std::cout<< "/****************************************************/\n" << "Executing Linear with Gauss Sidel:\n";
         for(int i = 1; i <=3; i++)
         {
             CSVReader reader("part_two_datasets/reg" + std::to_string(i) + ".csv",",");
+            std::cout<<  "\nFile: \"part_two_datasets/reg" + std::to_string(i) + ".csv\"\n";
 
             // Get the data from CSV File
             std::vector<std::vector<double>> dataList = reader.getData();
@@ -225,10 +227,11 @@ int main(int argc, char *argv[])
         /* Run Part 2 exercise Gauss Elimination*/
         IEquationSolver *Gauss_elmination = new GaussElimination();
         Regression test_obj_linear_elmination(Gauss_elmination);
-
+         std::cout<< "/****************************************************/\n" << "Executing Linear with Gauss elimination:\n";
         for(int i = 1; i <=3; i++)
         {
             CSVReader reader("part_two_datasets/reg" + std::to_string(i) + ".csv",",");
+            std::cout<<  "\nFile: \"part_two_datasets/reg" + std::to_string(i) + ".csv\"\n";
 
             // Get the data from CSV File
             std::vector<std::vector<double>> dataList = reader.getData();
@@ -289,11 +292,11 @@ int main(int argc, char *argv[])
         /* Run Part 2 exercise Gauss sidel */
         IEquationSolver *Gauss_sidel = new GaussSeidel();
         Regression test_obj_linear_elmination(Gauss_sidel);
-
+        std::cout<< "/****************************************************/\n" << "Executing Polynomial with Gauss Sidel:\n";
         for(int i = 1; i <=2; i++)
         {
             CSVReader reader("part_two_datasets/reg" + std::to_string(i) + ".csv",",");
-
+            std::cout<<  "\nFile: \"part_two_datasets/reg" + std::to_string(i) + ".csv\"\n";
             // Get the data from CSV File
             std::vector<std::vector<double>> dataList = reader.getData();
 
@@ -323,7 +326,7 @@ int main(int argc, char *argv[])
 
             // Execute the Linear regrission
             test_obj_linear_elmination.calculateCoeffs(x, y, no_of_points, order, Linear_coeffs, Polynomial);
-            std::cout<<"a0="<<convert(Linear_coeffs[0])<<", a1="<<convert(Linear_coeffs[1])<<", a2="<<convert(Linear_coeffs[2])<<"\n";
+//            std::cout<<"a0="<<convert(Linear_coeffs[0])<<", a1="<<convert(Linear_coeffs[1])<<", a2="<<convert(Linear_coeffs[2])<<"\n";
 
 //            // write output of linear Reg to CSV file
             std::ofstream myfile_linearReg;
@@ -351,11 +354,11 @@ int main(int argc, char *argv[])
         /* Run Part 2 exercise Gauss Elimination*/
         IEquationSolver *Gauss_elmination = new GaussElimination();
         Regression test_obj_linear_elmination(Gauss_elmination);
-
+        std::cout<< "/****************************************************/\n" << "Executing Polynomial with Gauss elimination:\n";
         for(int i = 1; i <=2; i++)
         {
             CSVReader reader("part_two_datasets/reg" + std::to_string(i) + ".csv",",");
-
+            std::cout<<  "\nFile: \"part_two_datasets/reg" + std::to_string(i) + ".csv\"\n";
             // Get the data from CSV File
             std::vector<std::vector<double>> dataList = reader.getData();
 
@@ -385,7 +388,7 @@ int main(int argc, char *argv[])
 
             // Execute the Linear regrission
             test_obj_linear_elmination.calculateCoeffs(x, y, no_of_points, order, Linear_coeffs, Polynomial);
-            std::cout<<"a0="<<convert(Linear_coeffs[0])<<", a1="<<convert(Linear_coeffs[1])<<", a2="<<convert(Linear_coeffs[2])<<"\n";
+//            std::cout<<"a0="<<convert(Linear_coeffs[0])<<", a1="<<convert(Linear_coeffs[1])<<", a2="<<convert(Linear_coeffs[2])<<"\n";
 
 //            // write output of linear Reg to CSV file
             std::ofstream myfile_linearReg;
@@ -417,12 +420,12 @@ int main(int argc, char *argv[])
         /* Run Part 3 exercise */
         Interpolation test_obj_int;
         test_obj_int.setEqSolverStrategy(Gauss_elmination);
-
+        std::cout<< "/****************************************************/\n" << "Executing newton and spline[with Gauss elimination]:\n";
         for(int i = 1; i <=4; i++)
         {
 
             CSVReader reader("part_three_datasets/sp" + std::to_string(i) + ".csv",",");
-
+            std::cout<<  "\nFile: \"part_three_datasets/sp" + std::to_string(i) + ".csv\"\n";
             // Get the data from CSV File
             std::vector<std::vector<double>> dataList = reader.getData();
 
@@ -494,12 +497,12 @@ int main(int argc, char *argv[])
         IEquationSolver *Gauss_test_obj_seidel = new GaussSeidel();
 
         test_obj_int_seidel.setEqSolverStrategy(Gauss_test_obj_seidel);
-
+        std::cout<< "/****************************************************/\n" << "Executing newton and spline[with Gauss sidel]:\n";
         for(int i = 1; i <=4; i++)
         {
 
             CSVReader reader("part_three_datasets/sp" + std::to_string(i) + ".csv",",");
-
+            std::cout<<  "\nFile: \"part_three_datasets/sp" + std::to_string(i) + ".csv\"\n";
             // Get the data from CSV File
             std::vector<std::vector<double>> dataList = reader.getData();
 

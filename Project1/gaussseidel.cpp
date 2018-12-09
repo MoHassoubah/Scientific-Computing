@@ -17,7 +17,7 @@ char GaussSeidel::solveEquations(double **coefficients, double *forcingFunctions
 
     if(!avoidZeroDiagonalAndMatchConvergenceCriterion(coefficients, rowIndexArr, size))
     {
-        std::cout << "Error!: Gauss Seidel: Gauss Seidel will not converge.\n";
+        std::cout << "warning!: Gauss Seidel pivot element is less than summation of row elements. It may not converge\n";
         for (int i =0; i<size;i++)
         {
             rowIndexArr[i] = i;
@@ -44,6 +44,7 @@ char GaussSeidel::solveEquations(double **coefficients, double *forcingFunctions
     {
         if (coefficients[rowIndexArr[i]][i] == 0)
         {
+            std::cout << "Error!: Gauss Seidel pivot element is =0 after reordering. It will not converge\n";
             return -1;
         }
      }
