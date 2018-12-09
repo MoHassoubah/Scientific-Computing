@@ -29,7 +29,7 @@ public:
     void setEqSolverStrategy (IEquationSolver * s){m_eqsSolver = s;}
 
 private:
-
+    double m_tolerance = 1e-15;   /* default tolerance value */
     IEquationSolver * m_eqsSolver;
 };
 

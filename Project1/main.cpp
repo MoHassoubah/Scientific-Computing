@@ -5,7 +5,15 @@
 #include "interpolation.h"
 #include "csvreader.h"
 #include <string>
+#include<iomanip>
 
+std::string convert(float value)
+{
+  std::stringstream ss;
+  ss << std::setprecision(std::numeric_limits<float>::digits10+1);
+  ss << value;
+  return ss.str();
+}
 
 int main(int argc, char *argv[])
 {
@@ -89,35 +97,35 @@ int main(int argc, char *argv[])
         /* Test the newton interpolation */
         std::vector<std::vector<double> > dataList = {{1,0},{4,1.386294},{6,1.791759},{5,1.609438}};
 
-        double y_of_x, error, finite_coeff[4] ;
+        double y_of_x, error[3], finite_coeff[4] ;
 
         int order = 3;
         Interpolation test_obj_1;
         test_obj_1.setEqSolverStrategy(Gauss_test_obj);
         test_obj_1.NewtonsCalcInterpolatingPoly(dataList,
-                                                order, 2, &y_of_x, &error,finite_coeff);
+                                                order, 2, &y_of_x, &error[0],finite_coeff);
         std::cout<<"f"<<order<<"(2)="<<y_of_x<<", R"<<order-1<<"="<<error<<"\n";
         std::cout<< "finite coeffs:"<<finite_coeff[0]<<" , "<<finite_coeff[1]<<" , "<<finite_coeff[2]<<" , "<<finite_coeff[3]<<" \n";
     }
 
-    {
-        /* test cubic spline */
-        double coeffs[4];
-        std::vector<std::vector<double> > dataList = {{3,2.5},{4.5,1},{7,2.5},{9,0.5}};
+//    {
+//        /* test cubic spline */
+//        double coeffs[4];
+//        std::vector<std::vector<double> > dataList = {{3,2.5},{4.5,1},{7,2.5},{9,0.5}};
 
-        Interpolation test_obj_1;
-        test_obj_1.setEqSolverStrategy(Gauss_test_obj);
-        test_obj_1.CSplineCalculateCoeffs(dataList, coeffs);
-        for(int i =0; i < 12; i+=4)
-        {
-            std::cout<<"coeffs->>"<<i/4<< "  "<<"a = "<<coeffs[i]<< "  "<<"b="<<coeffs[i+1]<< "  "<<"c="<<coeffs[i+2]<< "  "<<"d="<<coeffs[i+3]<<"\n";
-        }
-    }
+//        Interpolation test_obj_1;
+//        test_obj_1.setEqSolverStrategy(Gauss_test_obj);
+//        test_obj_1.CSplineCalculateCoeffs(dataList, coeffs);
+//        for(int i =0; i < 12; i+=4)
+//        {
+//            std::cout<<"coeffs->>"<<i/4<< "  "<<"a = "<<coeffs[i]<< "  "<<"b="<<coeffs[i+1]<< "  "<<"c="<<coeffs[i+2]<< "  "<<"d="<<coeffs[i+3]<<"\n";
+//        }
+//    }
 
-    {
+//    {
 //        /* test csv reader */
 //        // Creating an object of CSVWriter
-//        CSVReader reader("C:/Users/mhassoub/Desktop/Nile masters stuff/3rd term/sceintific computing/assignements/assignement_1/coursework_1/part three datasets/sp1.csv");
+//        CSVReader reader("C:/Users/mhassoub/Desktop/Nile masters stuff/3rd term/sceintific computing/assignements/assignement_1/coursework_1/part three datasets/sp1.csv",",");
 
 //        // Get the data from CSV File
 //        std::vector<std::vector<double> > dataList = reader.getData();
@@ -132,7 +140,7 @@ int main(int argc, char *argv[])
 //            std::cout<<std::endl;
 //        }
 //        std::cout<<"std sting test"<<std::to_string(12341254) + " sadf sdf\n";
-    }
+//    }
 
     {
         /* test output in csv file */
@@ -150,45 +158,48 @@ int main(int argc, char *argv[])
 
     {
         /* Run Part 3 exercise */
-        Interpolation test_obj_1;
-        test_obj_1.setEqSolverStrategy(Gauss_test_obj);
+        Interpolation test_obj_int;
+        test_obj_int.setEqSolverStrategy(Gauss_test_obj);
 
         for(int i = 1; i <=4; i++)
         {
-            double y_of_x, error ;
 
-            double *coeffs;
-            double *finite_coeff;
-
-            CSVReader reader("part_three_datasets/sp" + std::to_string(i) + ".csv");
+            CSVReader reader("part_three_datasets/sp" + std::to_string(i) + ".csv",",");
 
             // Get the data from CSV File
             std::vector<std::vector<double>> dataList = reader.getData();
 
+            double y_of_x, error[dataList.size()-1] ;
+
+            double *coeffs;
+            double *finite_coeff;
+
+//            sort(dataList.begin(), dataList.end());
+
             coeffs = new double [4*(dataList.size()-1)];
             finite_coeff = new double [dataList.size()];
 
-            test_obj_1.CSplineCalculateCoeffs(dataList, coeffs);
+            test_obj_int.CSplineCalculateCoeffs(dataList, coeffs);
 
-            test_obj_1.NewtonsCalcInterpolatingPoly(dataList,
+            test_obj_int.NewtonsCalcInterpolatingPoly(dataList,
                                                     dataList.size()-1,
-                                                    2, &y_of_x, &error,finite_coeff); // 2 dummy value
+                                                    2, &y_of_x, &error[0],finite_coeff); // 2 dummy value
 
             std::ofstream myfile_spline;
-            myfile_spline.open ("part_three_datasets/sp"+ std::to_string(i) + "_spline"+ ".csv");
+            myfile_spline.open ("part_three_datasets/sp"+ std::to_string(i) + "_spline_elimination"+ ".csv");
             myfile_spline << "a0,a1,a2,a3,st_range,end_range\n";
 
             for(int j =0; j < (4*(dataList.size()-1)); j+=4)
             {
-                myfile_spline<< std::to_string(coeffs[j+3])+ "," + std::to_string(coeffs[j+2])+ "," + std::to_string(coeffs[j+1])
-                        + "," + std::to_string(coeffs[j])+ "," +
-                        std::to_string(dataList[j/4][0])+ "," + std::to_string(dataList[(j/4)+1][0]) + "\n";
+                myfile_spline<< convert(coeffs[j+3])+ "," + convert(coeffs[j+2])+ "," + convert(coeffs[j+1])
+                        + "," + convert(coeffs[j])+ "," +
+                        convert(dataList[j/4][0])+ "," + convert(dataList[(j/4)+1][0]) + "\n";
             }
             myfile_spline.close();
             delete[] coeffs;
 
             std::ofstream myfile_newton;
-            myfile_newton.open ("part_three_datasets/sp"+ std::to_string(i) + "_newton"+ ".csv");
+            myfile_newton.open ("part_three_datasets/sp"+ std::to_string(i) + "_newton_elimination"+ ".csv");
 
             for(int j =0; j < dataList.size(); j++)
             {
@@ -201,15 +212,103 @@ int main(int argc, char *argv[])
 
             for(int j =0; j < dataList.size(); j++)
             {
-                myfile_newton<< std::to_string(finite_coeff[j]) + ",";
+                myfile_newton<<convert(finite_coeff[j]) + ",";
             }
             myfile_newton<< std::to_string(dataList.size()-1);
             myfile_newton.close();
             delete[] finite_coeff;
+
+            std::ofstream myfile_newton_error;
+            myfile_newton_error.open ("part_three_datasets/sp"+ std::to_string(i) + "_newton_error_elimination"+ ".csv");
+
+            for(int j = 0; j < (dataList.size()-1); j++)
+            {
+                myfile_newton_error<<convert(error[j]) + ",";
+            }
+            myfile_newton_error.close();
+        }
+    }
+
+
+    {
+        /* Run Part 3 exercise using seidel*/
+        Interpolation test_obj_int_seidel;
+        /* gauss seidel testing */
+        IEquationSolver *Gauss_test_obj_seidel = new GaussSeidel();
+
+        test_obj_int_seidel.setEqSolverStrategy(Gauss_test_obj_seidel);
+
+        for(int i = 1; i <=4; i++)
+        {
+
+            CSVReader reader("part_three_datasets/sp" + std::to_string(i) + ".csv",",");
+
+            // Get the data from CSV File
+            std::vector<std::vector<double>> dataList = reader.getData();
+
+            double y_of_x, error[dataList.size()-1] ;
+
+            double *coeffs;
+            double *finite_coeff;
+
+//            sort(dataList.begin(), dataList.end());
+
+            coeffs = new double [4*(dataList.size()-1)];
+            finite_coeff = new double [dataList.size()];
+
+            test_obj_int_seidel.CSplineCalculateCoeffs(dataList, coeffs);
+
+            test_obj_int_seidel.NewtonsCalcInterpolatingPoly(dataList,
+                                                    dataList.size()-1,
+                                                    2, &y_of_x, &error[0],finite_coeff); // 2 dummy value
+
+            std::ofstream myfile_spline;
+            myfile_spline.open ("part_three_datasets/sp"+ std::to_string(i) + "_spline_seidel"+ ".csv");
+            myfile_spline << "a0,a1,a2,a3,st_range,end_range\n";
+
+            for(int j =0; j < (4*(dataList.size()-1)); j+=4)
+            {
+                myfile_spline<< convert(coeffs[j+3])+ "," + convert(coeffs[j+2])+ "," + convert(coeffs[j+1])
+                        + "," + convert(coeffs[j])+ "," +
+                        convert(dataList[j/4][0])+ "," + convert(dataList[(j/4)+1][0]) + "\n";
+            }
+            myfile_spline.close();
+            delete[] coeffs;
+
+            std::ofstream myfile_newton;
+            myfile_newton.open ("part_three_datasets/sp"+ std::to_string(i) + "_newton_seidel"+ ".csv");
+
+            for(int j =0; j < dataList.size(); j++)
+            {
+                myfile_newton << "b" + std::to_string(j) + ",";
+            }
+
+            myfile_newton << "order";
+
+            myfile_newton << "\n";
+
+            for(int j =0; j < dataList.size(); j++)
+            {
+                myfile_newton<<convert(finite_coeff[j]) + ",";
+            }
+            myfile_newton<< std::to_string(dataList.size()-1);
+            myfile_newton.close();
+            delete[] finite_coeff;
+
+            std::ofstream myfile_newton_error;
+            myfile_newton_error.open ("part_three_datasets/sp"+ std::to_string(i) + "_newton_error_seidel"+ ".csv");
+
+            for(int j = 0; j < (dataList.size()-1); j++)
+            {
+                myfile_newton_error<<convert(error[j]) + ",";
+            }
+            myfile_newton_error.close();
         }
     }
 
     delete Gauss_test_obj;
     Gauss_test_obj = NULL;
+
+    return 0;
 
 }

@@ -57,7 +57,7 @@ def plot_points(arr_of_elements, color='r'):
 # equation_type : order
 # data_range: [start of interval, end of interval]
 # step_size : give if data step size is very small
-def plot_polynomial_equation(equation_coeff, data_range, step_size=0.01,color ='g'):
+def plot_polynomial_equation(equation_coeff, data_range, step_size=0.01,option ='g'):
     x = arange(float(data_range[0]), float(data_range[1]),
                step_size)  # get values between -10 and 10 with 0.01 step and set to y
     i = 0
@@ -67,7 +67,7 @@ def plot_polynomial_equation(equation_coeff, data_range, step_size=0.01,color ='
         y = y + float(equation_coeff[idx]) * x ** i
         i = i + 1
 
-    plot(x, y, color)
+    plot(x, y, option)
     return
 
 
@@ -107,18 +107,35 @@ def plot_linear_equation(equation_coeff, data_range=[-1000, 1000], data_range2=[
 # x_points : x0,x1,x2,...xn
 # data_range: [start of interval, end of interval]
 # step_size : give if data step size is very small
-def plot_newton_equation(equation_coeff, x_points, data_range, step_size=0.01):
+def plot_newton_equation(equation_coeff, x_points, data_range, step_size=0.01,option='r'):
     x = arange(float(data_range[0]), float(data_range[1]),
                step_size)  # get values between data_range[1] and data_range[1] with 0.01 step and set to y
     y = float(equation_coeff[0])
-    i = 1
+    x_fun =1
     for idx in range(1, len(equation_coeff)):
-        x_fun = 1
-        for x_idx in range(0,i):
-            x_fun *= (x - x_points[i])
+        x_fun *= (x - x_points[idx-1])
         y += float(equation_coeff[idx]) * x_fun
-        i += 1
-    plot(x, y)
+    plot(x, y, option)
+
+    return
+
+def plot_newton_equation_points(equation_coeff, x_points, inc_points,option='r'):
+    x=[]
+    for idx in range(0,len(x_points)-1):
+        step_size = (x_points[idx+1]-x_points[idx])/inc_points
+        if step_size != 0:
+            x.extend(arange(x_points[idx], x_points[idx+1],
+               step_size))
+        else:
+
+            print("Error!: step size = 0, two repeated points in the data set ")
+
+    y = float(equation_coeff[0])
+    x_fun = 1
+    for idx in range(1, len(equation_coeff)):
+        x_fun *= (asarray(x) - x_points[idx - 1])
+        y += float(equation_coeff[idx]) * x_fun
+    plot(x, y, option)
 
     return
 
@@ -151,31 +168,125 @@ for (dirpath, dirnames, filenames) in walk(path):
     for filename in filenames:
         fig_function = filename.split('_')
         filename = path + filename
-        # draw raw data
+        # draw raw data on newton and spline
         if len(fig_function) == 1:
-            figure(fig_function[0].split('.')[0])
+            figure(fig_function[0].split('.')[0]+'_newton')
             points = read_points_from_csv(filename)
             plot_points(points,'b')
-        elif len(fig_function) == 2:
+            figure(fig_function[0].split('.')[0] + '_newton_2x')
+            plot_points(points, 'b')
+            figure(fig_function[0].split('.')[0] + '_newton_4x')
+            plot_points(points, 'b')
+            figure(fig_function[0].split('.')[0] + '_newton_8x')
+            plot_points(points, 'b')
+            figure(fig_function[0].split('.')[0] + '_spline')
+            plot_points(points, 'b')
+            figure(fig_function[0].split('.')[0] + '_spline_2x')
+            plot_points(points, 'b')
+            figure(fig_function[0].split('.')[0] + '_spline_4x')
+            plot_points(points, 'b')
+            figure(fig_function[0].split('.')[0] + '_spline_8x')
+            plot_points(points, 'b')
+            figure(fig_function[0].split('.')[0] + '_newton_s')
+            points = read_points_from_csv(filename)
+            plot_points(points, 'b')
+            figure(fig_function[0].split('.')[0] + '_newton_2x_s')
+            plot_points(points, 'b')
+            figure(fig_function[0].split('.')[0] + '_newton_4x_s')
+            plot_points(points, 'b')
+            figure(fig_function[0].split('.')[0] + '_newton_8x_s')
+            plot_points(points, 'b')
+            figure(fig_function[0].split('.')[0] + '_spline_s')
+            plot_points(points, 'b')
+            figure(fig_function[0].split('.')[0] + '_spline_2x_s')
+            plot_points(points, 'b')
+            figure(fig_function[0].split('.')[0] + '_spline_4x_s')
+            plot_points(points, 'b')
+            figure(fig_function[0].split('.')[0] + '_spline_8x_s')
+            plot_points(points, 'b')
+        elif len(fig_function) == 3:
             #plot Newton data
-            if fig_function[1] == "newton.csv":
-                figure(fig_function[0])
-                print("newton")
-
+            if "newton" in fig_function[1]:
+                if "elimination" in fig_function[2]:
+                    figure(fig_function[0]+'_newton')
+                    row_arr = read_equation_coeff_from_csv(filename)
+                    points = read_points_from_csv(path+fig_function[0]+'.csv')
+                    step_size = (max(points[0])- min(points[0]))/1000 # equation
+                    figure(fig_function[0] + '_newton')
+                    plot_newton_equation(row_arr[0][0:-1], points[0], [min(points[0]),max(points[0])],step_size)
+                    figure(fig_function[0] + '_newton_2x')
+                    plot_newton_equation_points(row_arr[0][0:-1], points[0],2,'rs')
+                    figure(fig_function[0] + '_newton_4x')
+                    plot_newton_equation_points(row_arr[0][0:-1], points[0], 4, 'rs')
+                    figure(fig_function[0] + '_newton_8x')
+                    plot_newton_equation_points(row_arr[0][0:-1], points[0], 8, 'rs')
+                elif "seidel" in fig_function[2]:
+                    # figure(fig_function[0]+'_newton_s')
+                    row_arr = read_equation_coeff_from_csv(filename)
+                    points = read_points_from_csv(path+fig_function[0]+'.csv')
+                    step_size = (max(points[0])- min(points[0]))/1000 # equation
+                    figure(fig_function[0] + '_newton_s')
+                    plot_newton_equation(row_arr[0][0:-1], points[0], [min(points[0]),max(points[0])],step_size,'c')
+                    figure(fig_function[0] + '_newton_2x_s')
+                    plot_newton_equation_points(row_arr[0][0:-1], points[0],2,'cs')
+                    figure(fig_function[0] + '_newton_4x_s')
+                    plot_newton_equation_points(row_arr[0][0:-1], points[0], 4, 'cs')
+                    figure(fig_function[0] + '_newton_8x_s')
+                    plot_newton_equation_points(row_arr[0][0:-1], points[0], 8, 'cs')
+                else :
+                    print("error\n")
             #plot spline data
-            elif fig_function[1] == "spline.csv":
-                figure(fig_function[0])
-                row_arr = read_equation_coeff_from_csv(filename)
-                for row in row_arr:
-                    step_size = (float(row[-1]) - float(row[-2]))/1000
-                    if step_size == 0.0:
-                        print("range are equal in file: ",filename,"\nrow: ",row)
-                    else:
-                        plot_polynomial_equation(row[0:-2], row[-2:len(row)], step_size)
-
+            elif "spline" in fig_function[1]:
+                if "elimination" in fig_function[2]:
+                    row_arr = read_equation_coeff_from_csv(filename)
+                    for row in row_arr:
+                        # plot equation
+                        step_size = (float(row[-1]) - float(row[-2]))/1000
+                        # plot 2x
+                        step_size_2x = (float(row[-1]) - float(row[-2])) / 2
+                        # plot 4x
+                        step_size_4x = (float(row[-1]) - float(row[-2])) / 4
+                        # plot 8x
+                        step_size_8x = (float(row[-1]) - float(row[-2])) / 8
+                        if step_size == 0.0:
+                            print("range are equal in file: ",filename,"\nrow: ",row)
+                        else:
+                            figure(fig_function[0] + '_spline')
+                            plot_polynomial_equation(row[0:-2], row[-2:len(row)], step_size)
+                            figure(fig_function[0] + '_spline_2x')
+                            plot_polynomial_equation(row[0:-2], row[-2:len(row)], step_size_2x,'ys')
+                            figure(fig_function[0] + '_spline_4x')
+                            plot_polynomial_equation(row[0:-2], row[-2:len(row)], step_size_4x,'ys')
+                            figure(fig_function[0] + '_spline_8x')
+                            plot_polynomial_equation(row[0:-2], row[-2:len(row)], step_size_8x,'ys')
+                elif "seidel" in fig_function[2]:
+                    row_arr = read_equation_coeff_from_csv(filename)
+                    for row in row_arr:
+                        # plot equation
+                        step_size = (float(row[-1]) - float(row[-2]))/1000
+                        # plot 2x
+                        step_size_2x = (float(row[-1]) - float(row[-2])) / 2
+                        # plot 4x
+                        step_size_4x = (float(row[-1]) - float(row[-2])) / 4
+                        # plot 8x
+                        step_size_8x = (float(row[-1]) - float(row[-2])) / 8
+                        if step_size == 0.0:
+                            print("range are equal in file: ",filename,"\nrow: ",row)
+                        else:
+                            figure(fig_function[0] + '_spline_s')
+                            plot_polynomial_equation(row[0:-2], row[-2:len(row)], step_size,'c')
+                            figure(fig_function[0] + '_spline_2x_s')
+                            plot_polynomial_equation(row[0:-2], row[-2:len(row)], step_size_2x,'cs')
+                            figure(fig_function[0] + '_spline_4x_s')
+                            plot_polynomial_equation(row[0:-2], row[-2:len(row)], step_size_4x,'cs')
+                            figure(fig_function[0] + '_spline_8x_s')
+                            plot_polynomial_equation(row[0:-2], row[-2:len(row)], step_size_8x,'cs')
+                else:
+                    print("error")
 
             else:
                 print("wrong function in file name")
         else:
             print('Error wrong file name many _')
 show()
+path = "./project1/part_two_datasets/"
