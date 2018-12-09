@@ -17,6 +17,7 @@ std::string convert(float value)
 
 int main(int argc, char *argv[])
 {
+    IEquationSolver *Gauss_elmination = new GaussElimination();
     /* gauss seidel testing */
     IEquationSolver *Gauss_test_obj = new GaussSeidel();
     int size = 3;
@@ -289,7 +290,7 @@ int main(int argc, char *argv[])
     {
         /* Run Part 3 exercise */
         Interpolation test_obj_int;
-        test_obj_int.setEqSolverStrategy(Gauss_test_obj);
+        test_obj_int.setEqSolverStrategy(Gauss_elmination);
 
         for(int i = 1; i <=4; i++)
         {
