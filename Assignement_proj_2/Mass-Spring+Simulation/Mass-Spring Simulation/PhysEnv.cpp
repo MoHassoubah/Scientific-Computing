@@ -801,11 +801,6 @@ void CPhysEnv::RK4Integrate( float DeltaTime)
 	///////////////////////////////////////////////////////////////////////////////
 	halfDeltaT = DeltaTime / 2.0f;
 
-	// TAKE A HALF STEP AND UPDATE VELOCITY AND POSITION - Find y at full-interval (K1)
-	IntegrateSysOverTime(m_CurrentSys, m_CurrentSys, m_TempSys[3], DeltaTime);
-
-	// COMPUTE FORCES USING THESE NEW POSITIONS AND VELOCITIES - Compute slope at full-interval 
-	ComputeForces(m_TempSys[3]);
 
 	// TAKE A HALF STEP AND UPDATE VELOCITY AND POSITION - Find y at half-interval - using forces from K2 (K2)
 	IntegrateSysOverTime(m_CurrentSys, m_CurrentSys, m_TempSys[0], halfDeltaT);
@@ -825,9 +820,9 @@ void CPhysEnv::RK4Integrate( float DeltaTime)
 	// COMPUTE FORCES USING THESE NEW POSITIONS AND VELOCITIES - Compute slope at full-interval 
 	ComputeForces(m_TempSys[2]);
 
-	m_TargetSys->f.x = (m_TempSys[3]->f.x + 2 * (m_TempSys[0]->f.x + m_TempSys[1]->f.x) + m_TempSys[2]->f.x) / 6;
-	m_TargetSys->f.y = (m_TempSys[3]->f.y + 2 * (m_TempSys[0]->f.y + m_TempSys[1]->f.y) + m_TempSys[2]->f.y) / 6;
-	m_TargetSys->f.z = (m_TempSys[3]->f.z + 2 * (m_TempSys[0]->f.z + m_TempSys[1]->f.z) + m_TempSys[2]->f.z) / 6;
+	m_TargetSys->f.x = (m_CurrentSys->f.x + 2 * (m_TempSys[0]->f.x + m_TempSys[1]->f.x) + m_TempSys[2]->f.x) / 6;
+	m_TargetSys->f.y = (m_CurrentSys->f.y + 2 * (m_TempSys[0]->f.y + m_TempSys[1]->f.y) + m_TempSys[2]->f.y) / 6;
+	m_TargetSys->f.z = (m_CurrentSys->f.z + 2 * (m_TempSys[0]->f.z + m_TempSys[1]->f.z) + m_TempSys[2]->f.z) / 6;
 
 	IntegrateSysOverTime(m_CurrentSys, m_TempSys[2], m_TargetSys, DeltaTime);
 }
