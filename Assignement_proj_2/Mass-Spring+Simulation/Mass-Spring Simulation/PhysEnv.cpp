@@ -825,6 +825,10 @@ void CPhysEnv::RK4Integrate( float DeltaTime)
 		m_TempSys[3]->f.x = (m_CurrentSys->f.x + 2 * (m_TempSys[0]->f.x + m_TempSys[1]->f.x) + m_TempSys[2]->f.x) / 6;
 		m_TempSys[3]->f.y = (m_CurrentSys->f.y + 2 * (m_TempSys[0]->f.y + m_TempSys[1]->f.y) + m_TempSys[2]->f.y) / 6;
 		m_TempSys[3]->f.z = (m_CurrentSys->f.z + 2 * (m_TempSys[0]->f.z + m_TempSys[1]->f.z) + m_TempSys[2]->f.z) / 6;
+
+		m_TempSys[3]->v.x = (m_CurrentSys->v.x + 2 * (m_TempSys[0]->v.x + m_TempSys[1]->v.x) + m_TempSys[2]->v.x) / 6;
+		m_TempSys[3]->v.y = (m_CurrentSys->v.y + 2 * (m_TempSys[0]->v.y + m_TempSys[1]->v.y) + m_TempSys[2]->v.y) / 6;
+		m_TempSys[3]->v.z = (m_CurrentSys->v.z + 2 * (m_TempSys[0]->v.z + m_TempSys[1]->v.z) + m_TempSys[2]->v.z) / 6;
 		m_TempSys[3]++;
 	}
 
