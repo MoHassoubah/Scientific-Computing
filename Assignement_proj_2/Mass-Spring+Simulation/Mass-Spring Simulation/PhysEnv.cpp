@@ -791,11 +791,8 @@ void CPhysEnv::HeunIntegrate( float DeltaTime)
 // Arguments:	DeltaTime that has passed since last iteration
 // Notes:		This integrator uses the fourth-order Runge-Kutta method 
 ///////////////////////////////////////////////////////////////////////////////
-void CPhysEnv::RK4Integrate( float DeltaTime)
+void CPhysEnv::RK4Integrate(float DeltaTime, tParticle *initial, tParticle *target)
 {
-	// Your Code Here
-	tParticle temp_system;
-
 	/// Local Variables ///////////////////////////////////////////////////////////
 	float		halfDeltaT;
 	///////////////////////////////////////////////////////////////////////////////
@@ -803,29 +800,29 @@ void CPhysEnv::RK4Integrate( float DeltaTime)
 
 
 	// TAKE A HALF STEP AND UPDATE VELOCITY AND POSITION - Find y at half-interval - using forces from K2 (K2)
-	IntegrateSysOverTime(m_CurrentSys, m_CurrentSys, m_TempSys[0], halfDeltaT);
+	IntegrateSysOverTime(initial, initial, m_TempSys[0], halfDeltaT);
 	
 	// COMPUTE FORCES USING THESE NEW POSITIONS AND VELOCITIES - Compute slope at half-interval 
 	ComputeForces(m_TempSys[0]);
 
 	// TAKE A HALF STEP AND UPDATE VELOCITY AND POSITION - Find y at half-interval - using forces from K2 (K3)
-	IntegrateSysOverTime(m_CurrentSys, m_TempSys[0], m_TempSys[1], halfDeltaT);
+	IntegrateSysOverTime(initial, m_TempSys[0], m_TempSys[1], halfDeltaT);
 
 	// COMPUTE FORCES USING THESE NEW POSITIONS AND VELOCITIES - Compute slope at half-interval 
 	ComputeForces(m_TempSys[1]);
 
 	// TAKE A HALF STEP AND UPDATE VELOCITY AND POSITION - Find y at interval - using forces from K3 (K4)
-	IntegrateSysOverTime(m_CurrentSys, m_TempSys[1], m_TempSys[2], DeltaTime);
+	IntegrateSysOverTime(initial, m_TempSys[1], m_TempSys[2], DeltaTime);
 
 	// COMPUTE FORCES USING THESE NEW POSITIONS AND VELOCITIES - Compute slope at full-interval 
 	ComputeForces(m_TempSys[2]);
 
 	tParticle *k1, *k2, *k3, *k4, *goal_t;
-	k1 = m_CurrentSys;
+	k1 = initial;
 	k2 = m_TempSys[0];
 	k3 = m_TempSys[1];
 	k4 = m_TempSys[2];
-	goal_t = m_TempSys[3];
+	goal_t = m_TempSys[3];// keeping the address that m_TempSys[3] carries away from the ++!
 
 	for (int loop = 0; loop < m_ParticleCnt; loop++)
 	{
@@ -844,7 +841,7 @@ void CPhysEnv::RK4Integrate( float DeltaTime)
 		goal_t++;
 	}
 
-	IntegrateSysOverTime(m_CurrentSys, m_TempSys[3], m_TargetSys, DeltaTime);
+	IntegrateSysOverTime(initial, m_TempSys[3], target, DeltaTime);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -855,7 +852,63 @@ void CPhysEnv::RK4Integrate( float DeltaTime)
 ///////////////////////////////////////////////////////////////////////////////
 void CPhysEnv::RK4AdaptiveIntegrate( float DeltaTime)  
 {
-	// Your Code Here
+	//Try the full-step
+	RK4Integrate(DeltaTime, m_CurrentSys, m_TempSys[0]);
+
+	//Try the half-step
+	float		halfDeltaT;
+	halfDeltaT = DeltaTime / 2.0f;
+
+	RK4Integrate(halfDeltaT, m_CurrentSys, m_TempSys[1]);
+	RK4Integrate(halfDeltaT, m_TempSys[1], m_TempSys[2]);
+	
+	//Calculate error over all the particles
+	tParticle *full_stp, *half_stp;
+	float abs_dist_err = 0;
+
+	full_stp = m_TempSys[0];
+	half_stp = m_TempSys[2];
+
+	for (int loop = 0; loop < m_ParticleCnt; loop++)
+	{
+
+		float err_x = 0;
+		float err_y = 0;
+		float err_z = 0;
+
+		err_x = half_stp->pos.x - full_stp->pos.x;
+		err_y = half_stp->pos.y - full_stp->pos.y;
+		err_z = half_stp->pos.z - full_stp->pos.z;
+
+		abs_dist_err += sqrtf(pow(err_x, 2) + pow(err_y, 2)+ pow(err_z, 2));
+
+		full_stp++;
+		half_stp++;
+	}
+
+	if (m_ParticleCnt !=0)
+		abs_dist_err = abs_dist_err / m_ParticleCnt;
+
+	int zero_or_two = 0;
+
+	if (abs_dist_err > 0.001)
+	{
+		zero_or_two = 2;
+	}
+
+	// Push the adapted particle system into the target
+	tParticle *target_m, *adap_part_sys;
+	
+	adap_part_sys = m_TempSys[zero_or_two];
+	target_m = m_TargetSys;
+
+	for (int loop = 0; loop < m_ParticleCnt; loop++)
+	{
+		*target_m = *adap_part_sys;
+
+		target_m++;
+		adap_part_sys++;
+	}
 }
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -1004,7 +1057,7 @@ void CPhysEnv::Simulate(float DeltaTime, BOOL running)
 					HeunIntegrate(TargetTime-CurrentTime);
 					break;
 				case RK4_INTEGRATOR:
-					RK4Integrate(TargetTime-CurrentTime);
+					RK4Integrate(TargetTime - CurrentTime, m_CurrentSys, m_TargetSys);
 					break;
 				case RK4_ADAPTIVE_INTEGRATOR:
 					RK4AdaptiveIntegrate(TargetTime-CurrentTime);
