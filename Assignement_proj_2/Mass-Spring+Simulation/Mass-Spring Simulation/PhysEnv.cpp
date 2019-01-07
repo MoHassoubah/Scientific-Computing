@@ -853,21 +853,24 @@ void CPhysEnv::RK4Integrate(float DeltaTime, tParticle *initial, tParticle *targ
 void CPhysEnv::RK4AdaptiveIntegrate( float DeltaTime)  
 {
 	//Try the full-step
-	RK4Integrate(DeltaTime, m_CurrentSys, m_TempSys[0]);
+	tParticle * particle_sys_full_stp  = (tParticle *)malloc(sizeof(tParticle) * m_ParticleCnt);
+	RK4Integrate(DeltaTime, m_CurrentSys, particle_sys_full_stp);
 
 	//Try the half-step
+	tParticle * particle_sys_half_stp  = (tParticle *)malloc(sizeof(tParticle) * m_ParticleCnt);
 	float		halfDeltaT;
 	halfDeltaT = DeltaTime / 2.0f;
 
-	RK4Integrate(halfDeltaT, m_CurrentSys, m_TempSys[1]);
-	RK4Integrate(halfDeltaT, m_TempSys[1], m_TempSys[2]);
+	RK4Integrate(halfDeltaT, m_CurrentSys, m_TempSys[4]);
+	ComputeForces(m_TempSys[4]);
+	RK4Integrate(halfDeltaT, m_TempSys[4], particle_sys_half_stp);
 	
 	//Calculate error over all the particles
 	tParticle *full_stp, *half_stp;
 	float abs_dist_err = 0;
 
-	full_stp = m_TempSys[0];
-	half_stp = m_TempSys[2];
+	full_stp = particle_sys_full_stp;
+	half_stp = particle_sys_half_stp;
 
 	for (int loop = 0; loop < m_ParticleCnt; loop++)
 	{
@@ -889,17 +892,18 @@ void CPhysEnv::RK4AdaptiveIntegrate( float DeltaTime)
 	if (m_ParticleCnt !=0)
 		abs_dist_err = abs_dist_err / m_ParticleCnt;
 
-	int zero_or_two = 0;
-
-	if (abs_dist_err > 0.001)
-	{
-		zero_or_two = 2;
-	}
 
 	// Push the adapted particle system into the target
 	tParticle *target_m, *adap_part_sys;
 	
-	adap_part_sys = m_TempSys[zero_or_two];
+	adap_part_sys = particle_sys_full_stp;
+
+
+	if (abs_dist_err > 0.001)
+	{
+		adap_part_sys = particle_sys_half_stp;
+	}
+
 	target_m = m_TargetSys;
 
 	for (int loop = 0; loop < m_ParticleCnt; loop++)
@@ -909,6 +913,9 @@ void CPhysEnv::RK4AdaptiveIntegrate( float DeltaTime)
 		target_m++;
 		adap_part_sys++;
 	}
+
+	free(particle_sys_full_stp);
+	free(particle_sys_half_stp);
 }
 ///////////////////////////////////////////////////////////////////////////////
 
