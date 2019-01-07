@@ -820,16 +820,28 @@ void CPhysEnv::RK4Integrate( float DeltaTime)
 	// COMPUTE FORCES USING THESE NEW POSITIONS AND VELOCITIES - Compute slope at full-interval 
 	ComputeForces(m_TempSys[2]);
 
+	tParticle *k1, *k2, *k3, *k4, *goal_t;
+	k1 = m_CurrentSys;
+	k2 = m_TempSys[0];
+	k3 = m_TempSys[1];
+	k4 = m_TempSys[2];
+	goal_t = m_TempSys[3];
+
 	for (int loop = 0; loop < m_ParticleCnt; loop++)
 	{
-		m_TempSys[3]->f.x = (m_CurrentSys->f.x + 2 * (m_TempSys[0]->f.x + m_TempSys[1]->f.x) + m_TempSys[2]->f.x) / 6;
-		m_TempSys[3]->f.y = (m_CurrentSys->f.y + 2 * (m_TempSys[0]->f.y + m_TempSys[1]->f.y) + m_TempSys[2]->f.y) / 6;
-		m_TempSys[3]->f.z = (m_CurrentSys->f.z + 2 * (m_TempSys[0]->f.z + m_TempSys[1]->f.z) + m_TempSys[2]->f.z) / 6;
+		goal_t->f.x = (k1->f.x + 2 * (k2->f.x + k3->f.x) + k4->f.x) / 6;
+		goal_t->f.y = (k1->f.y + 2 * (k2->f.y + k3->f.y) + k4->f.y) / 6;
+		goal_t->f.z = (k1->f.z + 2 * (k2->f.z + k3->f.z) + k4->f.z) / 6;
 
-		m_TempSys[3]->v.x = (m_CurrentSys->v.x + 2 * (m_TempSys[0]->v.x + m_TempSys[1]->v.x) + m_TempSys[2]->v.x) / 6;
-		m_TempSys[3]->v.y = (m_CurrentSys->v.y + 2 * (m_TempSys[0]->v.y + m_TempSys[1]->v.y) + m_TempSys[2]->v.y) / 6;
-		m_TempSys[3]->v.z = (m_CurrentSys->v.z + 2 * (m_TempSys[0]->v.z + m_TempSys[1]->v.z) + m_TempSys[2]->v.z) / 6;
-		m_TempSys[3]++;
+		goal_t->v.x = (k1->v.x + 2 * (k2->v.x + k3->v.x) + k4->v.x) / 6;
+		goal_t->v.y = (k1->v.y + 2 * (k2->v.y + k3->v.y) + k4->v.y) / 6;
+		goal_t->v.z = (k1->v.z + 2 * (k2->v.z + k3->v.z) + k4->v.z) / 6;
+		
+		k1++;
+		k2++;
+		k3++;
+		k4++;
+		goal_t++;
 	}
 
 	IntegrateSysOverTime(m_CurrentSys, m_TempSys[3], m_TargetSys, DeltaTime);
