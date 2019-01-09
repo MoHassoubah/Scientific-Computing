@@ -738,6 +738,20 @@ void CPhysEnv::IntegrateSysOverTime(tParticle *initial,tParticle *source, tParti
 	}
 }
 
+float CPhysEnv::CalculateErrorForHeun(tParticle * currentIteration, tParticle * previousIteration)
+{
+	float accumulativeError = 0.0f;
+
+	for (int i = 0; i < m_ParticleCnt; i++)
+	{
+		accumulativeError += fabsf((currentIteration->pos.x - previousIteration->pos.x) / currentIteration->pos.x) * 100;
+		accumulativeError += fabsf((currentIteration->pos.y - previousIteration->pos.y) / currentIteration->pos.y) * 100;
+		accumulativeError += fabsf((currentIteration->pos.z - previousIteration->pos.z) / currentIteration->pos.z) * 100;
+	}
+
+	return accumulativeError / (3 * m_ParticleCnt);
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 // Function:	EulerIntegrate 
 // Purpose:		Calculate new Positions and Velocities given a deltatime
@@ -782,6 +796,7 @@ void CPhysEnv::MidPointIntegrate( float DeltaTime)
 void CPhysEnv::HeunIntegrate(float DeltaTime)
 {
 	int maxNumberOfIterations = 15, i;
+	float errors[2];
 
 	IntegrateSysOverTime(m_CurrentSys, m_CurrentSys, m_TempSys[0], DeltaTime);
 
@@ -790,6 +805,13 @@ void CPhysEnv::HeunIntegrate(float DeltaTime)
 		ComputeForces(m_TempSys[i % 2]);
 
 		IntegrateSysOverTime(m_CurrentSys, m_TempSys[i % 2], m_TempSys[(i + 1) % 2], DeltaTime);
+
+		errors[(i + 1) % 2] = CalculateErrorForHeun(m_TempSys[(i + 1) % 2], m_TempSys[i % 2]);
+
+		if (errors[(i + 1) % 2] > errors[i % 2])
+		{
+			break;
+		}
 	}
 
 	ComputeForces(m_TempSys[i % 2]);

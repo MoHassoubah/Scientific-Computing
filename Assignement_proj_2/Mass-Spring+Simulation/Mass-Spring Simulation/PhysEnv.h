@@ -138,6 +138,7 @@ private:
 // Operations
 private:
 	inline void	IntegrateSysOverTime(tParticle *initial,tParticle *source, tParticle *target, float deltaTime);
+	float	CalculateErrorForHeun(tParticle *currentIteration, tParticle *previousIteration);
 	void	RK4Integrate( float DeltaTime, tParticle *initial, tParticle *target);
 	void	RK4AdaptiveIntegrate( float DeltaTime);
 	void	MidPointIntegrate( float DeltaTime);
