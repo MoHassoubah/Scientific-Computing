@@ -779,9 +779,40 @@ void CPhysEnv::MidPointIntegrate( float DeltaTime)
 // Arguments:	DeltaTime that has passed since last iteration
 // Notes:		This integrator uses the Heun's method
 ///////////////////////////////////////////////////////////////////////////////
-void CPhysEnv::HeunIntegrate( float DeltaTime)
+void CPhysEnv::HeunIntegrate(float DeltaTime)
 {
-	// Your Code Here
+	int maxNumberOfIterations = 15, i;
+
+	IntegrateSysOverTime(m_CurrentSys, m_CurrentSys, m_TempSys[0], DeltaTime);
+
+	for (i = 0; i < maxNumberOfIterations; ++i)
+	{
+		ComputeForces(m_TempSys[i % 2]);
+
+		IntegrateSysOverTime(m_CurrentSys, m_TempSys[i % 2], m_TempSys[(i + 1) % 2], DeltaTime);
+	}
+
+	ComputeForces(m_TempSys[i % 2]);
+
+	tParticle *source, *target;
+	target = m_TargetSys;
+	source = m_TempSys[i % 2];
+
+	for (int loop = 0; loop < m_ParticleCnt; loop++)
+	{
+		target->v.x = source->v.x;
+		target->v.y = source->v.y;
+		target->v.z = source->v.z;
+
+		target->oneOverM = source->oneOverM;
+
+		target->pos.x = source->pos.x;
+		target->pos.y = source->pos.y;
+		target->pos.z = source->pos.z;
+
+		source++;
+		target++;
+	}
 }
 
 
