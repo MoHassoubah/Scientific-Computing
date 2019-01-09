@@ -94,7 +94,7 @@ for out_arr_RK_A_index,out_arr_RK_A_time in enumerate(out_arr_RK_A[0]):
 print("Max Error:\n")
 print("\tEuler = ",maxError_euler)
 print("\tMidpoint = ",maxError_MidPoint)
-print("\Heun = ",maxError_Heun)
+print("\tHeun = ",maxError_Heun)
 print("\tRK = ",maxError_RK)
 print("\tRK_A= ",maxError_RK_A)
 show()
