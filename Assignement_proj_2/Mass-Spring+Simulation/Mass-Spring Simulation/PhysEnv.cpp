@@ -894,33 +894,27 @@ void CPhysEnv::RK4AdaptiveIntegrate( float DeltaTime)
 
 	RK4Integrate(halfDeltaT, m_CurrentSys, m_TempSys[4]);
 	ComputeForces(m_TempSys[4]);
-	RK4Integrate(halfDeltaT, m_TempSys[4], particle_sys_half_stp);
+	RK4Integrate(halfDeltaT, m_TempSys[4], m_TargetSys);
 	
 	//Calculate error over all the particles
 	tParticle *full_stp, *half_stp;
-	float abs_dist_err = 0;
+	/* float abs_dist_err = 0; */
 
 	full_stp = particle_sys_full_stp;
-	half_stp = particle_sys_half_stp;
+	half_stp = m_TargetSys;
 
 	for (int loop = 0; loop < m_ParticleCnt; loop++)
 	{
 
-		float err_x = 0;
-		float err_y = 0;
-		float err_z = 0;
-
-		err_x = half_stp->pos.x - full_stp->pos.x;
-		err_y = half_stp->pos.y - full_stp->pos.y;
-		err_z = half_stp->pos.z - full_stp->pos.z;
-
-		abs_dist_err += sqrtf(pow(err_x, 2) + pow(err_y, 2)+ pow(err_z, 2));
+		half_stp->pos.x += (half_stp->pos.x - full_stp->pos.x)/15;
+		half_stp->pos.y += (half_stp->pos.y - full_stp->pos.y)/15;
+		half_stp->pos.z += (half_stp->pos.z - full_stp->pos.z)/15;
 
 		full_stp++;
 		half_stp++;
 	}
 
-	if (m_ParticleCnt !=0)
+	/* if (m_ParticleCnt !=0)
 		abs_dist_err = abs_dist_err / m_ParticleCnt;
 
 
@@ -944,9 +938,9 @@ void CPhysEnv::RK4AdaptiveIntegrate( float DeltaTime)
 		target_m++;
 		adap_part_sys++;
 	}
-
+ */
 	free(particle_sys_full_stp);
-	free(particle_sys_half_stp);
+	/* free(particle_sys_half_stp); */
 }
 ///////////////////////////////////////////////////////////////////////////////
 
