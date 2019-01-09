@@ -26,11 +26,13 @@ def read_file_into_array(FileName, OutArrays):
 out_arr_ref = [[]]
 out_arr_Euler = [[]]
 out_arr_MidPoint = [[]]
+out_arr_Heun = [[]]
 out_arr_RK = [[]]
 out_arr_RK_A = [[]]
 read_file_into_array("test_currentSys_RK_ref_001.txt", out_arr_ref)
 read_file_into_array("test_currentSys_euler_0.1.txt", out_arr_Euler)
 read_file_into_array("test_currentSys_MidPoint_0.1.txt", out_arr_MidPoint)
+read_file_into_array("test_currentSys_Heun_0.1.txt", out_arr_Heun)
 read_file_into_array("test_currentSys_RK_0.1.txt", out_arr_RK)
 read_file_into_array("test_currentSys_RK_A_0.1.txt", out_arr_RK_A)
 figure(1)
@@ -47,9 +49,13 @@ plot(out_arr_RK[0],out_arr_RK[particaleNum],'r-')
 figure(4)
 plot(out_arr_ref[0],out_arr_ref[particaleNum],'k-')
 plot(out_arr_RK_A[0],out_arr_RK_A[particaleNum],'y-')
+figure(5)
+plot(out_arr_ref[0],out_arr_ref[particaleNum],'k-')
+plot(out_arr_Heun[0],out_arr_Heun[particaleNum],'g-')
 
 maxError_euler = 0
 maxError_MidPoint = 0
+maxError_Heun = 0
 maxError_RK = 0
 maxError_RK_A = 0
 maxError_euler = 0
@@ -66,6 +72,13 @@ for out_arr_MidPoint_index,out_arr_MidPoint_time in enumerate(out_arr_MidPoint[0
             if(maxError_MidPoint < abs(out_arr_ref[particaleNum][out_arr_ref_index] - out_arr_MidPoint[particaleNum][out_arr_MidPoint_index])):
                 maxError_MidPoint = abs(out_arr_ref[particaleNum][out_arr_ref_index] - out_arr_MidPoint[particaleNum][out_arr_MidPoint_index])
 
+
+for out_arr_Heun_index,out_arr_Heun_time in enumerate(out_arr_Heun[0]):
+    for out_arr_ref_index,out_arr_ref_time in enumerate(out_arr_ref[0]):
+        if(out_arr_Heun_time == out_arr_ref_time):
+            if(maxError_Heun < abs(out_arr_ref[particaleNum][out_arr_ref_index] - out_arr_Heun[particaleNum][out_arr_Heun_index])):
+                maxError_Heun = abs(out_arr_ref[particaleNum][out_arr_ref_index] - out_arr_Heun[particaleNum][out_arr_Heun_index])
+
 for out_arr_RK_index,out_arr_RK_time in enumerate(out_arr_RK[0]):
     for out_arr_ref_index,out_arr_ref_time in enumerate(out_arr_ref[0]):
         if(out_arr_RK_time == out_arr_ref_time):
@@ -81,6 +94,7 @@ for out_arr_RK_A_index,out_arr_RK_A_time in enumerate(out_arr_RK_A[0]):
 print("Max Error:\n")
 print("\tEuler = ",maxError_euler)
 print("\tMidpoint = ",maxError_MidPoint)
+print("\Heun = ",maxError_Heun)
 print("\tRK = ",maxError_RK)
 print("\tRK_A= ",maxError_RK_A)
 show()
