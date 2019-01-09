@@ -4,6 +4,8 @@
 #include <GL/glu.h>
 #include <assert.h>
 #include <math.h>
+#include <iostream>
+#include <fstream>
 
 #include "Clothy.h"
 #include "PhysEnv.h"
@@ -1082,9 +1084,30 @@ void CPhysEnv::Simulate(float DeltaTime, BOOL running)
     float		TargetTime = DeltaTime;
 	tParticle	*tempSys;
 	int			collisionState;
+	std::ofstream myfile;
+	static bool frist_time=true;
+	static float time = 0;
+	myfile.open("test_currentSys.txt", std::ios::app);
+	if (frist_time)
+	{
+		myfile << "Pcount" << m_ParticleCnt << "\n";
+		frist_time = false;
+	}
 
     while(CurrentTime < DeltaTime)
     {
+		if (m_ParticleCnt != 0) {
+			time += DeltaTime;
+			myfile << "t=" << time << "\n";
+		}
+		for (int loop = 0; loop < m_ParticleCnt; loop++)
+		{
+			myfile << "P" << loop << "=" << m_CurrentSys->pos.y << "\n";
+			m_CurrentSys++;
+		}
+		m_CurrentSys -= m_ParticleCnt;
+		myfile.close();
+
 		if (running)
 		{
 			ComputeForces(m_CurrentSys);
@@ -1099,6 +1122,7 @@ void CPhysEnv::Simulate(float DeltaTime, BOOL running)
 			}
 			else
 			{
+				
 				switch (m_IntegratorType)
 				{
 				case EULER_INTEGRATOR:
