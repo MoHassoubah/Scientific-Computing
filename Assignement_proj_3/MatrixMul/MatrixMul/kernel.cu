@@ -10,24 +10,37 @@
 using namespace std;
 using namespace std::chrono;
 
-#define  MAX_NUM_OF_ROWS 1000
-#define	 MAX_NUM_OF_COLS 1000
+#define  MAX_NUM_OF_ROWS 1024
+#define	 MAX_NUM_OF_COLS 1024
 
 float Matrix_1[MAX_NUM_OF_ROWS][MAX_NUM_OF_COLS];
 float Matrix_2[MAX_NUM_OF_ROWS][MAX_NUM_OF_COLS];
 float Matrix_output[MAX_NUM_OF_ROWS][MAX_NUM_OF_COLS];
 
-int no_of_rows_1 = 64;
-int no_of_rows_2 = 64;
-int	no_of_cols_1 = 64;
-int	no_of_cols_2 = 64;
+int no_of_rows_1 = 1024;
+int no_of_rows_2 = 1024;
+int	no_of_cols_1 = 1024;
+int	no_of_cols_2 = 1024;
 
 void ReadMatrix_1_2(void);
 cudaError_t MultiplyWithCuda(void);
 
-__global__ void MultiplyKernel(int *c, const int *a, const int *b)
+__global__ void MultiplyKernel(float *c, const float *a, const float *b, const int matrix_width)
 {
-    
+    //each thread will calculate a row by col of the two input matrcies 
+	// and add those value and output one value to be stored in C
+	float sum_tmp = 0;
+	// calculate Row & col Index >> this calculation is 
+	// because we need the index to jumb with the Size of the block
+	// when the block index increase
+	int Row = blockIdx.x * blockDim.x + threadIdx.x;
+	int Col = blockIdx.y * blockDim.y + threadIdx.y;
+
+	for (int k = 0; k < matrix_width; k++)
+	{
+		sum_tmp += a[Row*matrix_width + k] * b[k * matrix_width + Col];
+	}
+	c[Row*matrix_width + Col] = sum_tmp;
 }
 
 int main()
@@ -104,9 +117,9 @@ void ReadMatrix_1_2(void) {
 // Helper function for using CUDA to add vectors in parallel.
 cudaError_t MultiplyWithCuda()
 {
-    int *dev_a = 0; //Matrix_1
-    int *dev_b = 0; //Matrix_2
-    int *dev_c = 0; //Matrix_output
+    float *dev_a = 0; //Matrix_1
+    float *dev_b = 0; //Matrix_2
+    float *dev_c = 0; //Matrix_output
     cudaError_t cudaStatus;
 
     // Choose which GPU to run on, change this on a multi-GPU system.
@@ -148,8 +161,21 @@ cudaError_t MultiplyWithCuda()
         goto Error;
     }
 
+	// no_of_threads to run in parralled no_of_rows_1*no_of_cols_2
+	int no_of_parrallel_threads = no_of_rows_1 * no_of_cols_2;
+	// theads and blocks definition without shared memory
+	dim3 threasPerBlock(no_of_parrallel_threads, no_of_parrallel_threads);
+	dim3 blocksPerGrid(1, 1);
+	if (no_of_parrallel_threads >= 32) // max number of threads per block (1024,512,64)
+	{
+		threasPerBlock.x = 32;
+		threasPerBlock.y = 32;
+		blocksPerGrid.x = ceil(double(no_of_rows_1)/ threasPerBlock.x);
+		blocksPerGrid.y = ceil(double(no_of_cols_2)/threasPerBlock.y);
+	}
+
     // Launch a kernel on the GPU with one thread for each element.
-	MultiplyKernel <<<1, 5 >>>(dev_c, dev_a, dev_b);
+	MultiplyKernel <<< blocksPerGrid, threasPerBlock >>>(dev_c, dev_a, dev_b, no_of_cols_1);
 
     // Check for any errors launching the kernel
     cudaStatus = cudaGetLastError();
@@ -167,7 +193,8 @@ cudaError_t MultiplyWithCuda()
     }
 
     // Copy output vector from GPU buffer to host memory.
-    cudaStatus = cudaMemcpy(Matrix_output, dev_c, no_of_rows_1*no_of_cols_2 * sizeof(float), cudaMemcpyDeviceToHost);
+	int output_width = no_of_parrallel_threads;
+    cudaStatus = cudaMemcpy(Matrix_output, dev_c, output_width * sizeof(float), cudaMemcpyDeviceToHost);
     if (cudaStatus != cudaSuccess) {
         fprintf(stderr, "cudaMemcpy failed!");
         goto Error;
