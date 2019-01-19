@@ -27,8 +27,7 @@ cudaError_t MultiplyWithCuda(void);
 
 __global__ void MultiplyKernel(int *c, const int *a, const int *b)
 {
-    int i = threadIdx.x;
-    c[i] = a[i] + b[i];
+    
 }
 
 int main()
@@ -52,13 +51,13 @@ int main()
 	cout << "Multiplication Time CPU(us):" << duration << "\n";
 
 	//print the output matrix for testing
-	for (int i = 0; i < no_of_cols_1; i++) {
-		for (int j = 0; j < no_of_rows_2; j++)
-		{
-			cout << Matrix_output[i][j] << "	";
-		}
-		cout << "\n";
-	}
+//	for (int i = 0; i < no_of_cols_1; i++) {
+//		for (int j = 0; j < no_of_rows_2; j++)
+//		{
+//			cout << Matrix_output[i][j] << "	";
+//		}
+//		cout << "\n";
+//	}
 
     // cudaDeviceReset must be called before exiting in order for profiling and
     // tracing tools such as Nsight and Visual Profiler to show complete traces.
