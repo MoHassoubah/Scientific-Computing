@@ -9,7 +9,7 @@
 
 #define DEFAULT_THRESHOLD  4000
 
-#define DEFAULT_FILENAME "/content/drive/My Drive/Colab Notebooks/BWstop-sign.ppm"//baboon.pgm"//
+#define DEFAULT_FILENAME "BWstop-sign.ppm"//baboon.pgm"//
 
 
 
@@ -178,15 +178,15 @@ void HostPrewitt(int xsize, int ysize,int thresh, unsigned int *input_pic, int *
 
 __global__ void gpuPrewittWithoutSm(int xsize, int ysize,int thresh, unsigned int *input_pic, int *result)
 {
-    int bx = blockIdx.x;  int by = blockIdx.y;
-    int tx = threadIdx.x; int ty = threadIdx.y;
+    int by = blockIdx.x;  int bx = blockIdx.y;
+    int ty = threadIdx.x; int tx = threadIdx.y;
     
     int tile_w = 5;
 
     int Row = by * tile_w + ty;
     int Col = bx * tile_w + tx;
     
-    if((Row > 0) && (Row < xsize-1)&&(Col > 0) && (Col < ysize-1))
+    if((Row > 0) && (Row < ysize-1)&&(Col > 0) && (Col < xsize-1))
     {
         int offset = Row*xsize + Col;
         int magnitude, sum1, sum2;
@@ -215,8 +215,8 @@ __global__ void gpuPrewittWITHSm(int xsize, int ysize,int thresh, unsigned int *
     
     __shared__ int blk_share[tile_w+2][tile_w+2];
     
-    int bx = blockIdx.x;  int by = blockIdx.y;
-    int tx = threadIdx.x; int ty = threadIdx.y;
+    int by = blockIdx.x;  int bx = blockIdx.y;
+    int ty = threadIdx.x; int tx = threadIdx.y;
 
     int Row = by * tile_w + ty;
     int Col = bx * tile_w + tx;
@@ -261,7 +261,7 @@ __global__ void gpuPrewittWITHSm(int xsize, int ysize,int thresh, unsigned int *
     __syncthreads();
     
     
-    if((Row > 0) && (Row < xsize-1)&&(Col > 0) && (Col < ysize-1))
+    if((Row > 0) && (Row < ysize-1)&&(Col > 0) && (Col < xsize-1))
     {
         int offset = Row*xsize + Col;
         int magnitude, sum1, sum2;
@@ -303,11 +303,11 @@ void GPUPrewittHandler(int xsize, int ysize,int thresh, unsigned int *input_pic,
     
     cudaMalloc(&result, size);
     
-    dim3 DimGrid(ceil(xsize/tile_w), ceil(xsize/tile_w), 1);
+    dim3 DimGrid(ceil(double(ysize)/tile_w), ceil(double(xsize)/tile_w), 1);
     dim3 DimBlock(5, 5, 1);
 
     
-   // gpuPrewittWithoutSm<<<DimGrid, DimBlock>>>(xsize, ysize, thresh, pic, result);
+ //   gpuPrewittWithoutSm<<<DimGrid, DimBlock>>>(xsize, ysize, thresh, pic, result);
     gpuPrewittWITHSm<<<DimGrid, DimBlock>>>(xsize, ysize, thresh, pic, result);
     
     
@@ -365,7 +365,7 @@ int main( int argc, char **argv )
   //HostPrewitt(xsize, ysize,thresh, pic, result);
   GPUPrewittHandler(xsize, ysize, thresh, pic, result);
     
-  write_ppm( "/content/drive/My Drive/Colab Notebooks/result.ppm", xsize, ysize, 255, result);
+  write_ppm( "result.ppm", xsize, ysize, 255, result);
 
   fprintf(stderr, "prewitt done\n"); 
 
