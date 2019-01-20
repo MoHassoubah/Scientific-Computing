@@ -16,10 +16,10 @@ float Matrix_1[MAX_NUM_OF_ROWS][MAX_NUM_OF_COLS];
 float Matrix_2[MAX_NUM_OF_ROWS][MAX_NUM_OF_COLS];
 float Matrix_output[MAX_NUM_OF_ROWS][MAX_NUM_OF_COLS];
 
-int no_of_rows_1 = 1024;
-int no_of_rows_2 = 1024;
-int	no_of_cols_1 = 1024;
-int	no_of_cols_2 = 1024;
+int no_of_rows_1 = 4;
+int no_of_rows_2 = 4;
+int	no_of_cols_1 = 4;
+int	no_of_cols_2 = 4;
 
 void ReadMatrix_1_2(void);
 void multiply(void);

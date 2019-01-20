@@ -17,15 +17,15 @@ float Matrix_1[MAX_NUM_OF_ROWS][MAX_NUM_OF_COLS];
 float Matrix_2[MAX_NUM_OF_ROWS][MAX_NUM_OF_COLS];
 float Matrix_output[MAX_NUM_OF_ROWS][MAX_NUM_OF_COLS];
 
-int no_of_rows_1 = 1024;
-int no_of_rows_2 = 1024;
-int	no_of_cols_1 = 1024;
-int	no_of_cols_2 = 1024;
+int no_of_rows_1 = 4;
+int no_of_rows_2 = 4;
+int	no_of_cols_1 = 4;
+int	no_of_cols_2 = 4;
 
 void ReadMatrix_1_2(void);
 cudaError_t MultiplyWithCuda(void);
 
-__global__ void MultiplyKernel(float *c, const float *a, const float *b, const int matrix_width)
+__global__ void MultiplyKernel(float *c, const float *a, const float *b, const int wc,const int hc, const int CommonDim)
 {
     //each thread will calculate a row by col of the two input matrcies 
 	// and add those value and output one value to be stored in C
@@ -36,11 +36,13 @@ __global__ void MultiplyKernel(float *c, const float *a, const float *b, const i
 	int Row = blockIdx.x * blockDim.x + threadIdx.x;
 	int Col = blockIdx.y * blockDim.y + threadIdx.y;
 
-	for (int k = 0; k < matrix_width; k++)
-	{
-		sum_tmp += a[Row*matrix_width + k] * b[k * matrix_width + Col];
+	if ((Row < wc) && (Col < hc)) {
+		for (int k = 0; k < CommonDim; k++)
+		{
+			sum_tmp += a[Row*CommonDim + k] * b[k * CommonDim + Col];
+		}
+		c[Row*CommonDim + Col] = sum_tmp;
 	}
-	c[Row*matrix_width + Col] = sum_tmp;
 }
 
 int main()
@@ -175,7 +177,7 @@ cudaError_t MultiplyWithCuda()
 	}
 
     // Launch a kernel on the GPU with one thread for each element.
-	MultiplyKernel <<< blocksPerGrid, threasPerBlock >>>(dev_c, dev_a, dev_b, no_of_cols_1);
+	MultiplyKernel <<< blocksPerGrid, threasPerBlock >>>(dev_c, dev_a, dev_b, no_of_rows_1 ,no_of_cols_2, no_of_cols_1);
 
     // Check for any errors launching the kernel
     cudaStatus = cudaGetLastError();
